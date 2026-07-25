@@ -1,0 +1,92 @@
+import sqlite3
+import os
+
+DB_NAME = "app.db"
+
+# Inicializa la base de datos y crea la tabla si no existe.
+def initDb():
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS csvDatasets (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            fileName TEXT NOT NULL,
+            filePath TEXT NOT NULL UNIQUE,
+            createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            lastUsedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    conn.commit()
+    conn.close()
+
+# Guarda un nuevo CSV o actualiza la fecha si ya existía.
+def saveCsvPath(filePath: str):
+    """Guarda un nuevo CSV o actualiza la fecha si ya existía."""
+    if not os.path.exists(filePath):
+        raise FileNotFoundError(f"El archivo no existe en la ruta: {filePath}")
+
+    fileName = os.path.basename(filePath)
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    
+    # Si la ruta ya existe, actualiza lastUsedAt a la hora actual
+    cursor.execute("""
+        INSERT INTO csvDatasets (fileName, filePath, lastUsedAt)
+        VALUES (?, ?, CURRENT_TIMESTAMP)
+        ON CONFLICT(filePath) DO UPDATE SET
+            lastUsedAt = CURRENT_TIMESTAMP
+    """, (fileName, filePath))
+    
+    conn.commit()
+    conn.close()
+
+# Devuelve TODOS los CSVs registrados (para la pestaña de Historial Completo).
+def getAllCsvs():
+    """Devuelve TODOS los CSVs registrados (para la pestaña de Historial Completo)."""
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT id, fileName, filePath, createdAt, lastUsedAt 
+        FROM csvDatasets 
+        ORDER BY id DESC
+    """)
+    rows = cursor.fetchall()
+    conn.close()
+    
+    return [
+        {
+            "id": row[0],
+            "fileName": row[1],
+            "filePath": row[2],
+            "createdAt": row[3],
+            "lastUsedAt": row[4]
+        }
+        for row in rows
+    ]
+
+# Devuelve solo los 'limit' (5) CSVs usados más recientemente (para la Ventana Principal).
+def getRecentCsvs(limit: int = 5):
+    """Devuelve solo los 'limit' (5) CSVs usados más recientemente (para la Ventana Principal)."""
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    # pedir solo los 5 más recientes
+    cursor.execute("""
+        SELECT id, fileName, filePath, createdAt, lastUsedAt 
+        FROM csvDatasets 
+        ORDER BY lastUsedAt DESC 
+        LIMIT ?
+    """, (limit,))
+    rows = cursor.fetchall()
+    conn.close()
+    
+    return [
+        {
+            "id": row[0],
+            "fileName": row[1],
+            "filePath": row[2],
+            "createdAt": row[3],
+            "lastUsedAt": row[4]
+        }
+        for row in rows
+    ]
