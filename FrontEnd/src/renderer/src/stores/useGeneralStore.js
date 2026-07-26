@@ -61,7 +61,7 @@ export const useGeneralStore = create((set, get) => ({
 
   // Train *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
-  trained: true,
+  trained: false,
 
   setTrained: (trained) => set({trained})
 

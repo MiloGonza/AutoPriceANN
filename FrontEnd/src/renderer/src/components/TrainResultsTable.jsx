@@ -53,11 +53,11 @@ export default function TrainResultsTable({ progress = 0 }) {
 	}, [])
 
 	const columns = [
-		{ key: "epoch", label: "Epoch", align: "center" },
+		{ key: "epoch", label: "Epoca", align: "center" },
 		{ key: "trainLoss", label: "Train Loss", align: "right" },
 		{ key: "testLoss", label: "Test Loss", align: "right" },
-		{ key: "trainAccuracy", label: "Train Accuracy", align: "right" },
-		{ key: "testAccuracy", label: "Test Accuracy", align: "right" },
+		{ key: "trainAccuracy", label: "Train MAE", align: "right" },
+		{ key: "testAccuracy", label: "Test MAE", align: "right" },
 	]
 
 	return (
@@ -104,8 +104,8 @@ export default function TrainResultsTable({ progress = 0 }) {
 									<span className="text-center text-lime-accent font-medium">{row.epoch}</span>
 									<span className="text-right text-pink-accent">{row.trainLoss}</span>
 									<span className="text-right text-pink-accent/70">{row.testLoss}</span>
-									<span className="text-right text-lime-accent">{row.trainAccuracy}%</span>
-									<span className="text-right text-lime-accent/70">{row.testAccuracy}%</span>
+									<span className="text-right text-lime-accent">{row.trainAccuracy}</span>
+									<span className="text-right text-lime-accent/70">{row.testAccuracy}</span>
 								</div>
 							)
 						})}

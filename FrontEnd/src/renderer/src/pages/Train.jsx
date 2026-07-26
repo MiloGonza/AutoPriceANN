@@ -30,10 +30,7 @@ function generateMockChartData(count = 80) {
 
 function Train() {
 
-    const {
-        selectedCSV,
-        trained,
-    } = useGeneralStore()
+    const selectedCSV = useGeneralStore((s) => s.selectedCSV)
 
     const chartData = useMemo(() => generateMockChartData(80), [])
 
@@ -73,32 +70,14 @@ function Train() {
                 <div className='dashboard-card'>
                     <TrainForm />
                     <hr className='text-white my-4' />
-                    <AnimatePresence mode='wait'>
-                        {
-                            trained ?
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    className='grid grid-cols-1 gap-6'>
-                                    <div className='bg-dark-hover border-dark-border border rounded-2xl p-2 h-52'>
-                                        <TrainingChart title="Perdida por Epoca" data={chartData} dataKeyTrain="trainLoss" dataKeyTest="testLoss" yLabel="Perdida" xLabel="Epoca" colorTrain="#c2f02d" colorTest="#f06292" />
-                                    </div>
-                                    <div className='bg-dark-hover border-dark-border border rounded-2xl p-2 h-52'>
-                                        <TrainingChart title="Precision por Epoca" data={chartData} dataKeyTrain="trainAccuracy" dataKeyTest="testAccuracy" yLabel="Precicion (%)" xLabel="Epoca" colorTrain="#38bdf8" colorTest="#a855f7" />
-                                    </div>
-                                </motion.div>
-                                :
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    className='flex items-center justify-center h-108 bg-dark-hover border-dark-border border rounded-2xl'
-                                >
-                                    <span className='text-red-500'>Aun no se ha hecho ningun entrenamiento</span>
-                                </motion.div>
-                        }
-                    </AnimatePresence>
+                    <div className='grid grid-cols-1 gap-6'>
+                        <div className='bg-dark-hover border-dark-border border rounded-2xl p-2 h-52'>
+                            <TrainingChart title="Perdida por Epoca" data={chartData} dataKeyTrain="trainLoss" dataKeyTest="testLoss" yLabel="Perdida" xLabel="Epoca" colorTrain="#c2f02d" colorTest="#f06292" />
+                        </div>
+                        <div className='bg-dark-hover border-dark-border border rounded-2xl p-2 h-52'>
+                            <TrainingChart title="MAE por Epoca" data={chartData} dataKeyTrain="trainAccuracy" dataKeyTest="testAccuracy" yLabel="MAE" xLabel="Epoca" colorTrain="#38bdf8" colorTest="#a855f7" />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

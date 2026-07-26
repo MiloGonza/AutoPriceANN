@@ -1,10 +1,14 @@
 import os
+import sys
 import math
 import pandas as pd
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import database
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "model"))
+from train import loadAndPreprocess
 
 # Inicialización de FastAPI
 app = FastAPI(title="Servidor de Python para AutoProceANN", version="1.0")
@@ -198,3 +202,19 @@ def registerDataset(payload: CSVPathRequest):
             status_code=500, 
             detail=f"Error en el servidor: {str(e)}"
         )
+
+# Procesa un CSV para entrenamiento y devuelve un resumen
+@app.post("/datasets/process")
+def processDataset(payload: CSVPathRequest):
+    try:
+        result = loadAndPreprocess(payload.filePath)
+        return {
+            "status": "success",
+            "stats": result["stats"],
+        }
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al procesar: {str(e)}")
