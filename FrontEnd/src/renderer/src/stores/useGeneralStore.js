@@ -58,4 +58,12 @@ export const useGeneralStore = create((set, get) => ({
     } catch { }
   },
   // Home *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+
+  // Train *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+
+  trained: true,
+
+  setTrained: (trained) => set({trained})
+
+  // Train *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 }))
