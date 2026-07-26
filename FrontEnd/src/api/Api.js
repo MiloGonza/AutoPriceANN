@@ -50,3 +50,15 @@ export async function InspectDataset(datasetId) {
 		throw error
 	}
 }
+
+export async function GetColumnOptions(filePath) {
+	try {
+		const response = await api.get('datasets/column-options', {
+			params: { filePath }
+		})
+		return response.data
+	} catch (error) {
+		console.error('Error fetching column options:', error)
+		throw error
+	}
+}

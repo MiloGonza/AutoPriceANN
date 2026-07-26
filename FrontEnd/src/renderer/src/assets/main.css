@@ -111,6 +111,13 @@ body {
   }
 }
 
+@utility btn-gradient-pp {
+  background: linear-gradient(to right, var(--color-lime-accent), var(--color-pink-accent), var(--color-purple-accent));
+  color: #000000;
+  font-weight: 600;
+  border-radius: 0.75rem;
+}
+
 @utility btnAnimate{
   @apply hover:bg-lime-accent/10;
   @apply hover:cursor-pointer;

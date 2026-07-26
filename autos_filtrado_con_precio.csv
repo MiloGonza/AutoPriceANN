@@ -1,0 +1,302 @@
+Año,Kilometraje,Marca,Modelo,Ha_tenido_accidentes,Precio_venta
+2014,27000,Ritz,Ritz,0,16.53
+2013,43000,Sx4,Sx4,0,2.09
+2017,6900,Ciaz,Ciaz,1,7.96
+2011,5200,Wagon,R,0,6.75
+2014,42450,Swift,Swift,0,18.81
+2018,2071,Vitara,Brezza,0,17.4
+2015,18796,Ciaz,Ciaz,0,22.47
+2015,33429,S,Cross,0,3.54
+2016,20273,Ciaz,Ciaz,1,11.42
+2015,42367,Ciaz,Ciaz,0,2.2
+2017,2135,Alto,800,0,6.64
+2015,51000,Ciaz,Ciaz,0,13.38
+2015,15000,Ciaz,Ciaz,0,2.12
+2015,26000,Ertiga,Ertiga,0,6.17
+2009,77427,Dzire,Dzire,0,16.77
+2016,43000,Ertiga,Ertiga,0,14.31
+2015,41678,Ertiga,Ertiga,1,6.68
+2016,43000,Ertiga,Ertiga,0,15.35
+2015,35500,Wagon,R,1,20.52
+2010,41442,Sx4,Sx4,1,1.65
+2016,25000,Alto,K10,0,20.44
+2017,2400,Ignis,Ignis,0,17.91
+2011,50000,Sx4,Sx4,1,9.5
+2014,45280,Alto,K10,1,5.15
+2013,56879,Wagon,R,1,23.99
+2011,20000,Swift,Swift,0,9.41
+2013,55138,Swift,Swift,0,3.68
+2017,16200,Swift,Swift,1,3.77
+2010,44542,Alto,K10,0,21.42
+2015,45000,Ciaz,Ciaz,0,15.69
+2012,51439,Ritz,Ritz,1,20.47
+2011,54200,Ritz,Ritz,0,18.65
+2014,39000,Swift,Swift,1,14.1
+2014,45000,Ertiga,Ertiga,1,24.37
+2014,45000,Dzire,Dzire,1,10.4
+2011,49998,Sx4,Sx4,0,14.47
+2015,48767,Dzire,Dzire,1,20.99
+2003,127000,800,800,0,16.04
+2016,10079,Alto,K10,1,21.75
+2003,62000,Sx4,Sx4,0,15.07
+2016,24524,Baleno,Baleno,1,18.06
+2014,46706,Alto,K10,1,2.58
+2008,58000,Sx4,Sx4,0,6.86
+2014,45780,Dzire,Dzire,0,8.3
+2012,50000,Omni,Omni,0,3.38
+2014,15000,Ciaz,Ciaz,0,6.97
+2013,64532,Ritz,Ritz,1,3.87
+2006,65000,Wagon,R,0,8.03
+2015,25870,Ertiga,Ertiga,0,16.44
+2017,37000,Ciaz,Ciaz,0,10.07
+2012,104707,Fortuner,Fortuner,1,10.2
+2015,40000,Fortuner,Fortuner,1,6.42
+2017,15000,Innova,Innova,1,7.77
+2013,135000,Fortuner,Fortuner,1,23.51
+2005,90000,Innova,Innova,0,16.73
+2009,70000,Corolla,Altis,1,15.81
+2015,40534,Etios,Cross,1,5.52
+2010,50000,Corolla,Altis,0,18.63
+2014,39485,Etios,G,1,5.34
+2014,41000,Fortuner,Fortuner,0,10.42
+2013,40001,Corolla,Altis,0,24.75
+2015,40588,Etios,Cross,0,16.54
+2014,78000,Fortuner,Fortuner,0,14.59
+2015,47000,Fortuner,Fortuner,1,17.59
+2017,6000,Fortuner,Fortuner,1,21.31
+2014,45000,Etios,Liva,1,19.74
+2017,11000,Innova,Innova,0,6.88
+2010,59000,Fortuner,Fortuner,1,2.25
+2011,88000,Corolla,Altis,0,8.91
+2016,12000,Corolla,Altis,0,7.79
+2014,71000,Etios,Liva,0,6.46
+2011,45000,Corolla,Altis,1,23.66
+2013,56001,Corolla,Altis,1,22.09
+2011,43000,Etios,Liva,1,8.89
+2014,83000,Etios,Cross,0,16.9
+2015,36000,Etios,G,0,10.8
+2013,72000,Corolla,Altis,1,22.99
+2004,135154,Corolla,Corolla,0,12.28
+2010,80000,Corolla,Altis,1,7.72
+2012,89000,Fortuner,Fortuner,1,7.3
+2016,23000,Corolla,Altis,1,14.69
+2015,40000,Etios,Gd,0,7.67
+2017,15000,Innova,Innova,1,15.24
+2015,38000,Innova,Innova,0,22.6
+2005,197176,Innova,Innova,0,10.89
+2006,142000,Camry,Camry,1,6.65
+2010,78000,Land,Cruiser,1,24.94
+2012,56000,Corolla,Altis,1,13.47
+2013,47000,Etios,Liva,1,3.64
+2014,40000,Etios,G,0,2.61
+2009,62000,Corolla,Altis,0,4.08
+2014,58242,Innova,Innova,1,16.24
+2005,75000,Innova,Innova,0,20.11
+2015,40000,Fortuner,Fortuner,0,11.42
+2008,89000,Corolla,Altis,0,2.99
+2012,72000,Corolla,Altis,0,10.47
+2016,29000,Innova,Innova,0,24.91
+2017,8700,Corolla,Altis,1,13.93
+2013,45000,Corolla,Altis,0,24.32
+2010,50024,Fortuner,Fortuner,1,21.73
+2016,3000,Royal,Enfield Thunder 500,1,1.77
+2017,1400,Um,Renegade Mojave,1,18.44
+2017,4000,Ktm,Rc200,1,17.52
+2017,1200,Bajaj,Dominar 400,0,14.12
+2017,4100,Royal,Enfield Classic 350,0,7.77
+2015,21700,Ktm,Rc390,1,16.56
+2014,16500,Hyosung,Gt250R,1,4.12
+2013,15000,Royal,Enfield Thunder 350,0,11.72
+2016,18000,Royal,Enfield Thunder 350,1,12.16
+2017,11000,Royal,Enfield Classic 350,1,23.91
+2016,6000,Ktm,Rc200,0,22.08
+2016,8700,Royal,Enfield Thunder 350,1,7.69
+2014,7000,Ktm,390 Duke,0,13.26
+2016,35000,Mahindra,Mojo Xt300,1,5.7
+2015,17000,Royal,Enfield Classic 350,0,22.95
+2015,17500,Royal,Enfield Classic 350,0,21.96
+2013,33000,Royal,Enfield Classic 350,1,8.51
+2015,14000,Royal,Enfield Thunder 500,0,16.52
+2015,26000,Royal,Enfield Classic 350,0,15.81
+2013,5400,Royal,Enfield Thunder 500,1,5.09
+2016,5700,Bajaj,Pulsar Rs200,0,19.42
+2011,6900,Royal,Enfield Thunder 350,0,14.18
+2016,6000,Royal,Enfield Bullet 350,1,19.8
+2013,46500,Royal,Enfield Classic 350,1,13.96
+2012,11500,Royal,Enfield Classic 500,0,1.51
+2009,40000,Royal,Enfield Classic 500,0,9.12
+2017,1300,Bajaj,Avenger 220,1,1.96
+2016,7000,Bajaj,Avenger 150,1,23.33
+2017,3000,Honda,Cb Hornet 160R,0,22.15
+2017,5000,Yamaha,Fz S V 2.0,0,21.04
+2017,11000,Honda,Cb Hornet 160R,0,8.73
+2015,18000,Yamaha,Fz 16,0,2.86
+2017,3500,Bajaj,Avenger 220,0,22.13
+2016,500,Bajaj,Avenger 220,1,23.75
+2017,11800,Tvs,Apache Rtr 160,0,3.51
+2015,5000,Bajaj,Pulsar 150,0,12.92
+2014,23500,Honda,Cbr 150,0,3.13
+2013,16000,Hero,Extreme,1,19.37
+2016,15000,Honda,Cb Hornet 160R,0,19.5
+2015,16600,Bajaj,Avenger 220 Dtsi,1,4.52
+2013,32000,Honda,Cbr 150,1,12.67
+2016,20000,Bajaj,Avenger 150 Street,0,14.42
+2015,29000,Yamaha,Fz V 2.0,0,7.73
+2016,25000,Yamaha,Fz V 2.0,1,22.0
+2014,25000,Bajaj,Pulsar Ns 200,1,11.44
+2012,19000,Tvs,Apache Rtr 160,1,6.48
+2014,15000,Hero,Extreme,1,14.17
+2015,58000,Yamaha,Fz S V 2.0,1,18.65
+2010,45000,Bajaj,Pulsar 220 F,0,6.23
+2016,24000,Bajaj,Pulsar 220 F,0,8.83
+2011,6000,Tvs,Apache Rtr 180,0,24.89
+2016,31000,Hero,Passion X Pro,0,16.77
+2012,13000,Bajaj,Pulsar Ns 200,1,11.8
+2013,45000,Bajaj,Pulsar Ns 200,0,13.66
+2014,8000,Yamaha,Fazer,0,4.34
+2017,4300,Honda,Activa 4G,0,6.78
+2017,15000,Tvs,Sport,0,9.45
+2015,23000,Yamaha,Fz S V 2.0,0,15.33
+2017,8600,Honda,Dream Yuga,0,6.91
+2017,4000,Honda,Activa 4G,0,6.68
+2011,24000,Bajaj,Avenger Street 220,0,3.17
+2014,23000,Tvs,Apache Rtr 180,0,16.33
+2012,14500,Bajaj,Pulsar Ns 200,1,6.88
+2010,27000,Bajaj,Avenger 220 Dtsi,0,22.78
+2016,14000,Hero,Splender Ismart,0,21.7
+2016,500,Activa,3G,1,3.17
+2016,1000,Hero,Passion Pro,1,7.09
+2014,42000,Tvs,Apache Rtr 160,0,17.22
+2013,12000,Honda,Cb Trigger,0,6.53
+2015,14000,Hero,Splender Ismart,1,4.61
+2012,5500,Yamaha,Fz S,0,23.48
+2015,6700,Hero,Passion Pro,1,14.92
+2014,13700,Bajaj,Pulsar 135 Ls,1,12.61
+2017,1300,Activa,4G,0,19.94
+2015,38600,Honda,Cb Unicorn,0,20.48
+2011,75000,Hero,Honda Cbz Extreme,0,5.97
+2011,30000,Honda,Karizma,1,3.78
+2016,24000,Honda,Activa 125,1,11.63
+2014,19000,Tvs,Jupyter,1,11.45
+2010,213000,Honda,Karizma,1,12.48
+2012,60000,Hero,Honda Passion Pro,1,18.63
+2016,50000,Hero,Splender Plus,0,17.32
+2013,30000,Honda,Cb Shine,0,24.63
+2013,21000,Bajaj,Discover 100,0,3.81
+2008,26000,Bajaj,Pulsar 150,1,10.96
+2008,1900,Suzuki,Access 125,1,9.47
+2010,22000,Tvs,Wego,0,21.75
+2013,32000,Honda,Cb Twister,0,7.34
+2013,18000,Hero,Glamour,0,5.97
+2005,55000,Hero,Super Splendor,0,12.04
+2008,60000,Bajaj,Pulsar 150,1,11.41
+2012,25000,Bajaj,Discover 125,0,8.05
+2007,49000,Hero,Hunk,1,7.37
+2013,24000,Hero,Ignitor Disc,0,23.2
+2008,50000,Hero,Cbz Xtreme,1,11.91
+2015,35000,Bajaj,Ct 100,1,21.74
+2008,500000,Activa,3G,0,14.43
+2010,33000,Honda,Cb Twister,0,2.69
+2011,35000,Bajaj,Discover 125,1,24.98
+2007,53000,Honda,Cb Shine,0,21.15
+2006,92233,Bajaj,Pulsar 150,0,24.27
+2010,58000,I20,I20,0,23.27
+2015,28200,Grand,I10,0,21.44
+2011,53460,I10,I10,0,5.41
+2015,28282,Eon,Eon,0,12.91
+2016,3493,Grand,I10,1,6.52
+2017,12479,Xcent,Xcent,1,10.92
+2015,34797,Grand,I10,1,2.88
+2017,3435,I20,I20,0,10.41
+2015,21125,Grand,I10,1,24.65
+2012,35775,I10,I10,0,7.73
+2015,43535,Elantra,Elantra,0,19.93
+2016,22671,Creta,Creta,1,12.19
+2011,31604,I20,I20,0,11.44
+2017,20114,Grand,I10,1,24.0
+2012,36100,Verna,Verna,1,24.89
+2016,12500,Eon,Eon,1,14.56
+2016,15000,Eon,Eon,1,18.38
+2014,45078,Verna,Verna,1,5.14
+2012,36000,Verna,Verna,1,8.47
+2017,38488,Eon,Eon,0,24.26
+2013,32000,I20,I20,0,15.11
+2014,77632,I20,I20,1,14.24
+2015,61381,Verna,Verna,0,19.08
+2013,36198,Verna,Verna,0,2.84
+2011,22517,I10,I10,0,15.23
+2015,24678,Grand,I10,1,13.32
+2011,57000,I10,I10,0,21.54
+2012,60000,Verna,Verna,0,5.2
+2012,52132,I20,I20,1,24.08
+2013,45000,Verna,Verna,0,3.38
+2017,15001,Verna,Verna,0,5.87
+2015,12900,Elantra,Elantra,0,15.48
+2013,53000,Grand,I10,0,17.37
+2015,4492,Grand,I10,0,7.03
+2017,15141,Verna,Verna,0,4.32
+2016,11849,Eon,Eon,0,22.42
+2015,68000,Creta,Creta,1,7.29
+2013,60241,Verna,Verna,0,15.47
+2012,23709,Eon,Eon,0,16.06
+2012,32322,Verna,Verna,0,11.35
+2015,35866,Xcent,Xcent,0,15.22
+2014,34000,Xcent,Xcent,1,13.79
+2016,7000,I20,I20,1,23.47
+2013,49000,Verna,Verna,1,6.3
+2012,71000,Verna,Verna,0,18.33
+2012,35000,I20,I20,1,7.11
+2015,36000,Verna,Verna,0,10.8
+2013,30000,I10,I10,1,17.28
+2016,17000,I20,I20,1,8.55
+2016,35934,Creta,Creta,0,8.93
+2013,56701,City,City,1,19.17
+2015,31427,Brio,Brio,1,3.2
+2014,48000,City,City,1,12.27
+2013,54242,City,City,0,24.96
+2012,53675,Brio,Brio,0,24.91
+2016,49562,City,City,1,3.22
+2015,40324,City,City,0,6.51
+2015,25000,City,City,0,7.73
+2014,36054,Amaze,Amaze,0,23.43
+2016,29223,City,City,1,22.2
+2016,5600,Brio,Brio,0,22.16
+2015,40023,Amaze,Amaze,1,10.18
+2016,16002,Jazz,Jazz,0,5.21
+2015,40026,Amaze,Amaze,0,21.09
+2017,21200,Jazz,Jazz,1,18.03
+2014,35000,Amaze,Amaze,1,15.87
+2016,19434,City,City,0,24.7
+2017,19000,Brio,Brio,1,16.87
+2015,18828,City,City,1,1.68
+2011,69341,City,City,0,20.7
+2009,69562,City,City,1,8.54
+2015,27600,City,City,0,17.09
+2010,61203,Jazz,Jazz,0,23.56
+2014,16500,Brio,Brio,1,4.66
+2016,30753,City,City,0,4.21
+2015,24800,City,City,0,4.02
+2015,21780,City,City,0,14.5
+2016,4000,Jazz,Jazz,1,7.9
+2014,40126,City,City,1,15.71
+2015,14465,Brio,Brio,0,18.36
+2006,50456,City,City,1,6.28
+2014,63000,City,City,0,16.4
+2016,9010,City,City,1,7.7
+2013,9800,Brio,Brio,1,12.98
+2016,15059,Jazz,Jazz,1,22.78
+2016,28569,Jazz,Jazz,0,21.38
+2015,44000,Amaze,Amaze,0,3.67
+2015,34000,City,City,1,11.45
+2016,10980,City,City,1,8.0
+2014,19000,Amaze,Amaze,0,1.58
+2015,31427,Brio,Brio,0,19.62
+2016,12000,Jazz,Jazz,1,16.47
+2010,38000,City,City,0,7.66
+2014,33019,Amaze,Amaze,1,18.92
+2015,60076,City,City,0,14.46
+2016,33988,City,City,1,11.55
+2015,60000,Brio,Brio,1,1.73
+2009,87934,City,City,0,3.27
+2017,9000,City,City,0,22.25
+2016,5464,Brio,Brio,0,22.74

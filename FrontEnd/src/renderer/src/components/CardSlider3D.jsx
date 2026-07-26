@@ -33,7 +33,7 @@ function MiniBarChart({ accidentsByYear = [], color = "#c2f02d" }) {
     );
 }
 
-export default function CardSlider3D({ items = [] }) {
+export default function CardSlider3D({ items = [], onCardSelect }) {
     const [selected, setSelected] = useState(0);
 
     const maxVisible = 5;
@@ -82,7 +82,10 @@ export default function CardSlider3D({ items = [] }) {
                     return (
                         <motion.div
                             key={i}
-                            onClick={() => setSelected(i)}
+                            onClick={() => {
+                                setSelected(i)
+                                onCardSelect?.(item)
+                            }}
                             animate={{
                                 rotateY,
                                 x: translateX,

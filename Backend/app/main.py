@@ -46,7 +46,7 @@ def healthCheck():
 # Endpoints para la gestión de Datasets (CSVs)
 # -------------------------------------------------------------
 
-REQUIRED_COLUMNS = {"Año", "Kilometraje", "Marca", "Modelo", "Ha_tenido_accidentes"}
+REQUIRED_COLUMNS = {"Año", "Kilometraje", "Marca", "Modelo", "Ha_tenido_accidentes", "Precio_venta"}
 
 def analyze_csv(filePath: str) -> dict:
     """Lee un CSV y extrae estadísticas para la card del front."""
@@ -139,6 +139,19 @@ def listRecentDatasets():
         analysis = analyze_csv(ds["filePath"])
         enriched.append({**ds, "analysis": analysis})
     return {"recentDatasets": enriched}
+
+# Devuelve los valores únicos de Marca y Modelo de un CSV específico
+@app.get("/datasets/column-options")
+def getColumnOptions(filePath: str):
+    if not os.path.exists(filePath):
+        raise HTTPException(status_code=404, detail="El archivo CSV no existe.")
+    try:
+        df = pd.read_csv(filePath)
+        brands = sorted(df["Marca"].dropna().unique().tolist()) if "Marca" in df.columns else []
+        models = sorted(df["Modelo"].dropna().unique().tolist()) if "Modelo" in df.columns else []
+        return {"brands": brands, "models": models}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al leer el CSV: {str(e)}")
 
 # Devuelve todos los CSVs registrados con paginación y análisis
 @app.get("/datasets")
