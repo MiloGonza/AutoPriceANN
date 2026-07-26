@@ -1,10 +1,15 @@
-import { useEffect, useCallback } from "react"
+import { useEffect, useCallback, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { useCSVStore } from "../stores/useCSVStore"
+import { useGeneralStore } from "../stores/useGeneralStore"
 import { ImportCSVs } from "../../../api/Api"
 import DatasetCard from "../components/DatasetCard"
 
 function DataSets() {
 	const { datasets, page, totalPages, loading, error, fetchDatasets, setPage } = useCSVStore()
+	const selectCSVFromDatasets = useGeneralStore((s) => s.selectCSVFromDatasets)
+	const navigate = useNavigate()
+	const [selectedId, setSelectedId] = useState(null)
 
 	useEffect(() => {
 		fetchDatasets(page)
@@ -19,6 +24,15 @@ function DataSets() {
 		}
 		fetchDatasets(page)
 	}, [fetchDatasets, page])
+
+	const handleSelect = useCallback(async (dataset) => {
+		if (selectedId === dataset.id) {
+			await selectCSVFromDatasets(dataset)
+			navigate('/')
+		} else {
+			setSelectedId(dataset.id)
+		}
+	}, [selectedId, selectCSVFromDatasets, navigate])
 
 	const pageNumbers = []
 	for (let i = 1; i <= totalPages; i++) pageNumbers.push(i)
@@ -53,9 +67,9 @@ function DataSets() {
 
 			<div className="flex-1 min-h-0 overflow-y-auto">
 				{datasets.length > 0 ? (
-					<div className="grid grid-cols-3 gap-4">
+					<div className="grid grid-cols-3 gap-4 overflow-hidden py-4 px-6">
 						{datasets.map((ds, i) => (
-							<DatasetCard key={ds.id} dataset={ds} index={i} />
+							<DatasetCard key={ds.id} dataset={ds} index={i} selected={ds.id === selectedId} onSelect={handleSelect} />
 						))}
 					</div>
 				) : (

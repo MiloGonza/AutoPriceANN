@@ -32,7 +32,7 @@ function MiniBarChart({ accidentsByYear = [], color = "#c2f02d" }) {
 
 const chartColors = ["#c2f02d", "#38bdf8", "#a855f7", "#f06292", "#fb923c"]
 
-export default function DatasetCard({ dataset, index = 0 }) {
+export default function DatasetCard({ dataset, index = 0, selected, onSelect }) {
 	const { analysis, fileName } = dataset
 
 	const ready = analysis?.readyForTraining ?? false
@@ -42,7 +42,14 @@ export default function DatasetCard({ dataset, index = 0 }) {
 	const accidentsByYear = analysis?.accidentsByYear ?? []
 
 	return (
-		<div className="rounded-2xl border border-dark-border bg-dark-card overflow-hidden flex flex-col">
+		<div
+			onClick={() => onSelect?.(dataset)}
+			className={`hover:z-99 rounded-2xl border bg-dark-card overflow-hidden flex flex-col cursor-pointer transition-all duration-200 hover:scale-110 ${
+				selected
+					? "border-lime-accent shadow-[0_0_15px_rgba(194,240,45,0.15)]"
+					: "border-dark-border"
+			}`}
+		>
 			<div className="p-4 flex flex-col gap-3 flex-1">
 				<div className="flex items-center justify-between">
 					<div className="flex items-center gap-3 min-w-0">
@@ -55,7 +62,7 @@ export default function DatasetCard({ dataset, index = 0 }) {
 							<span className="text-white text-sm font-medium block truncate">
 								{fileName}
 							</span>
-							<span className={`text-xs ${ready ? "text-lime-accent" : "text-muted-text"}`}>
+							<span className={`text-xs ${ready ? "text-lime-accent" : "text-red-500"}`}>
 								{ready ? "Listo para entrenar" : "Faltan columnas"}
 							</span>
 						</div>
@@ -72,7 +79,7 @@ export default function DatasetCard({ dataset, index = 0 }) {
 						<span className="text-muted-text">{accidentPct}% accidentes</span>
 					</div>
 					<div className="flex items-center gap-1.5">
-						<div className="w-2 h-2 rounded-full bg-lime-accent" />
+						<div className="w-2 h-2 rounded-full" style={{ backgroundColor: chartColors[index % chartColors.length] }} />
 						<span className="text-muted-text">{noAccidentPct}% sin accidentes</span>
 					</div>
 				</div>

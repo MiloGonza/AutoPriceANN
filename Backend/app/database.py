@@ -3,7 +3,7 @@ import os
 
 DB_NAME = "app.db"
 
-# Inicializa la base de datos y crea la tabla si no existe.
+# Inicializa la base de datos y crea las tablas si no existen.
 def initDb():
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
@@ -16,15 +16,19 @@ def initDb():
             lastUsedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS recentSelections (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            filePath TEXT NOT NULL UNIQUE,
+            selectedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
     conn.commit()
     conn.close()
 
 # Guarda un nuevo CSV o actualiza la fecha si ya existía.
 def saveCsvPath(filePath: str):
     """Guarda un nuevo CSV o actualiza la fecha si ya existía."""
-    if not os.path.exists(filePath):
-        raise FileNotFoundError(f"El archivo no existe en la ruta: {filePath}")
-
     fileName = os.path.basename(filePath)
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
@@ -90,6 +94,54 @@ def getRecentCsvs(limit: int = 5):
     rows = cursor.fetchall()
     conn.close()
     
+    return [
+        {
+            "id": row[0],
+            "fileName": row[1],
+            "filePath": row[2],
+            "createdAt": row[3],
+            "lastUsedAt": row[4]
+        }
+        for row in rows
+    ]
+
+# Registra un CSV como recién seleccionado (max 5).
+def addRecentSelection(filePath: str, limit: int = 5):
+    """Inserta un CSV en la tabla de selecciones recientes, manteniendo solo los más recientes."""
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM recentSelections WHERE filePath = ?", (filePath,))
+    cursor.execute("""
+        INSERT INTO recentSelections (filePath, selectedAt)
+        VALUES (?, CURRENT_TIMESTAMP)
+    """, (filePath,))
+
+    cursor.execute("""
+        DELETE FROM recentSelections
+        WHERE id NOT IN (
+            SELECT id FROM recentSelections ORDER BY selectedAt DESC LIMIT ?
+        )
+    """, (limit,))
+
+    conn.commit()
+    conn.close()
+
+# Devuelve los CSVs más recientemente seleccionados enriquecidos con datos de csvDatasets.
+def getRecentSelections(limit: int = 5):
+    """Devuelve los CSVs más recientemente seleccionados, con datos de la tabla csvDatasets."""
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT c.id, c.fileName, c.filePath, c.createdAt, c.lastUsedAt
+        FROM recentSelections r
+        JOIN csvDatasets c ON r.filePath = c.filePath
+        ORDER BY r.selectedAt DESC
+        LIMIT ?
+    """, (limit,))
+    rows = cursor.fetchall()
+    conn.close()
+
     return [
         {
             "id": row[0],

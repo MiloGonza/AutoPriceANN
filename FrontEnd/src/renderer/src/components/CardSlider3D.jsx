@@ -43,6 +43,14 @@ export default function CardSlider3D({ items = [], onCardSelect }) {
     const goLeft = () => setSelected((s) => Math.max(0, s - 1));
     const goRight = () => setSelected((s) => Math.min(total - 1, s + 1));
 
+    if (total === 0) {
+        return (
+            <div className="flex items-center justify-center h-full">
+                <span className="text-red-500 text-sm">No se ha seleccionado ningún dataset aún</span>
+            </div>
+        );
+    }
+
     return (
         <div className="relative flex items-center gap-4 w-full h-full">
             <button
@@ -123,7 +131,7 @@ export default function CardSlider3D({ items = [], onCardSelect }) {
                                             <span className="text-white text-base font-medium block">
                                                 {item.fileName || `Item ${i + 1}`}
                                             </span>
-                                            <span className={`text-xs ${ready ? "text-lime-accent" : "text-muted-text"}`}>
+                                            <span className={`text-xs ${ready ? "text-lime-accent" : "text-red-500"}`}>
                                                 {ready ? "Listo para entrenar" : "Faltan columnas"}
                                             </span>
                                         </div>
@@ -140,7 +148,7 @@ export default function CardSlider3D({ items = [], onCardSelect }) {
                                         <span className="text-muted-text">{accidentPct}% accidentes</span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <div className="w-2 h-2 rounded-full bg-lime-accent" />
+                                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: chartColors[i % chartColors.length] }} />
                                         <span className="text-muted-text">{noAccidentPct}% sin accidentes</span>
                                     </div>
                                 </div>

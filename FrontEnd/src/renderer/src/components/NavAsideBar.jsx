@@ -3,6 +3,7 @@ import HomeIcon from '../assets/icons/HomeIcon';
 import DatabaseIcon from '../assets/icons/DatabaseIcon';
 import { useLocation } from 'react-router-dom';
 import Logo from '../assets/Logo.png';
+import BrainIcon from '../assets/icons/BrainIcon';
 
 
 export function NavAsideBar() {
@@ -40,6 +41,18 @@ export function NavAsideBar() {
                                 size={2}
                                 fill={pathname === "/datasets" ? "transparent" : "currentColor"}
                                 stroke={pathname === "/datasets" ? "#c2f02d" : "currentColor"}
+                            />
+                        }
+                    />
+					<AsideItem
+                        to="/train"
+                        path={pathname}
+                        label="Entrenamiento"
+                        icon={
+                            <BrainIcon
+                                size={2}
+                                fill={pathname === "/train" ? "transparent" : "gray"}
+                                stroke={pathname === "/train" ? "#c2f02d" : "currentColor"}
                             />
                         }
                     />

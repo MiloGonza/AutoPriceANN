@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 const routeOrder = {
     "/": 0,
     "/datasets": 1,
+    "/train": 2,
 };
 
 export default function AnimatedRoutes({ location, previousPath, children }) {

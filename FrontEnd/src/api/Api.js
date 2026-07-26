@@ -62,3 +62,13 @@ export async function GetColumnOptions(filePath) {
 		throw error
 	}
 }
+
+export async function AddRecentSelection(filePath) {
+	try {
+		const response = await api.post('datasets/recentSelections', { filePath })
+		return response.data
+	} catch (error) {
+		console.error('Error adding recent selection:', error)
+		throw error
+	}
+}

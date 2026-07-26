@@ -130,15 +130,25 @@ def inspectDataset(filePath: str):
             detail=f"Error al leer el archivo CSV: {str(e)}"
         )
 
-# Devuelve solo los 5 CSVs más recientes enriquecidos
+# Devuelve solo los 5 CSVs más recientemente seleccionados enriquecidos
 @app.get("/datasets/recentCSVs")
 def listRecentDatasets():
-    recent = database.getRecentCsvs(limit=5)
+    recent = database.getRecentSelections(limit=5)
     enriched = []
     for ds in recent:
         analysis = analyze_csv(ds["filePath"])
         enriched.append({**ds, "analysis": analysis})
     return {"recentDatasets": enriched}
+
+# Registra un CSV como recientemente seleccionado
+@app.post("/datasets/recentSelections")
+def addRecentSelection(payload: CSVPathRequest):
+    try:
+        database.saveCsvPath(payload.filePath)
+        database.addRecentSelection(payload.filePath)
+        return {"status": "success", "message": "Selección registrada"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
 # Devuelve los valores únicos de Marca y Modelo de un CSV específico
 @app.get("/datasets/column-options")
@@ -183,8 +193,6 @@ def registerDataset(payload: CSVPathRequest):
             "message": "CSV guardado correctamente",
             "recentDatasets": database.getRecentCsvs(limit=5)
         }
-    except FileNotFoundError as e:
-        raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(
             status_code=500, 

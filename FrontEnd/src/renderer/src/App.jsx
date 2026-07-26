@@ -4,6 +4,7 @@ import { NavAsideBar } from './components/NavAsideBar';
 import { Home } from './pages/Home';
 import DataSets from './pages/DataSets';
 import AnimatedRoutes from './components/AnimatedRoutes';
+import Train from './pages/Train';
 
 function App() {
   const location = useLocation();
@@ -22,6 +23,7 @@ function App() {
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<Home />} />
             <Route path="/datasets" element={<DataSets />} />
+            <Route path='/train' element={<Train/>} />
           </Routes>
         </AnimatedRoutes>
       </main>

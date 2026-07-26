@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useModelStore } from '../stores/useModelStore'
-import { GetRecentDatasets, GetColumnOptions } from '../../../api/Api'
+import { GetColumnOptions } from '../../../api/Api'
 import CardSlider3D from '../components/CardSlider3D'
 
 import { Link } from 'react-router-dom'
@@ -19,17 +19,15 @@ export function Home() {
 		model, setModel,
 		accident, setAccident,
 		selectedCSV, setSelectedCSV,
+		recentCSVs, fetchRecentCSVs,
 	} = useGeneralStore()
 	const currentYear = new Date().getFullYear()
-	const [recentCSVs, setRecentCSVs] = useState([])
 	const [brands, setBrands] = useState([])
 	const [models, setModels] = useState([])
 
 	useEffect(() => {
-		GetRecentDatasets()
-			.then((data) => setRecentCSVs(data.recentDatasets))
-			.catch(() => { })
-	}, [])
+		fetchRecentCSVs()
+	}, [fetchRecentCSVs])
 
 	useEffect(() => {
 		if (!selectedCSV?.filePath) {
