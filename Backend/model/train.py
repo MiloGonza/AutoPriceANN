@@ -9,7 +9,8 @@ import os
 
 
 # Columnas que debe tener el CSV para poder entrenar de lo contrario error
-REQUIRED_COLUMNS = {"Año", "Kilometraje", "Marca", "Modelo", "Ha_tenido_accidentes", "Precio_venta"}
+REQUIRED_COLUMNS = {"Año", "Kilometraje", "Marca",
+                    "Modelo", "Ha_tenido_accidentes", "Precio_venta"}
 
 # Seracion de las columnas para procesar los datos no numericos a numericos
 NUMERIC_FEATURES = ["Año", "Kilometraje", "Ha_tenido_accidentes"]
@@ -42,8 +43,9 @@ def loadAndPreprocess(csvPath: str, testSize: float = 0.2, randomState: int = 42
     if missing:
         raise ValueError(f"Faltan columnas requeridas: {missing}")
 
-    # Quitar filas donde el precio esté vacío porque no sirven
-    myCsv = myCsv.dropna(subset=[TARGET])
+    # Quitar filas con columnas vacias para evitar problemas al entrenar
+    # myCsv = myCsv.dropna(subset=[TARGET])
+    myCsv = myCsv.dropna(subset=REQUIRED_COLUMNS)
 
     # Separar entradas y salida
     xNum = myCsv[NUMERIC_FEATURES].values.astype(numpy.float32)
@@ -59,11 +61,17 @@ def loadAndPreprocess(csvPath: str, testSize: float = 0.2, randomState: int = 42
         ]
     )
 
-#Terminar de definir entradas
+    targetScaler = StandardScaler()
+
+
+# Terminar de definir entradas y salidas (se escala la salida para evitar problemas por precios del tipo 195.356.895 my grandes)
     x = numpy.hstack([xNum, xCat])
     xProcessed = preprocessor.fit_transform(x)
+    y = targetScaler.fit_transform(
+        myCsv[[TARGET]]
+    ).astype(numpy.float32)
 
-    #pedir explicar
+    # pedir explicar
     # Armar los nombres de cada columna resultante
     featureNames = NUMERIC_FEATURES.copy()
     ohe = preprocessor.named_transformers_["cat"]
@@ -86,6 +94,9 @@ def loadAndPreprocess(csvPath: str, testSize: float = 0.2, randomState: int = 42
     testDataset = TensorDataset(xTestT, yTestT)
 
     nFeatures = xProcessed.shape[1]
+
+    # Una mousi-herramienta que ayudara mas tarde
+    # prediccionReal = targetScaler.inverse_transform(y)
 
     stats = {
         "totalRecords": len(myCsv),
@@ -111,6 +122,8 @@ def loadAndPreprocess(csvPath: str, testSize: float = 0.2, randomState: int = 42
 
 def createDataLoaders(processed, batchSize: int = 32):
     """Crea los DataLoaders para pasar datos a la red por lotes."""
-    trainLoader = DataLoader(processed["trainDataset"], batch_size=batchSize, shuffle=True)
-    testLoader = DataLoader(processed["testDataset"], batch_size=batchSize, shuffle=False)
+    trainLoader = DataLoader(
+        processed["trainDataset"], batch_size=batchSize, shuffle=True)
+    testLoader = DataLoader(
+        processed["testDataset"], batch_size=batchSize, shuffle=False)
     return trainLoader, testLoader
