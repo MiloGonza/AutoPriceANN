@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+/* 1. CONFIGURACIÓN DEL TEMA (CSS-First) */
+@theme {
+  /* Colores oscuros / Fondos */
+  --color-dark-bg: #0f1015;
+  --color-dark-card: #181a20;
+  --color-dark-hover: #1f222a;
+  --color-dark-border: #2a2d36;
+
+  /* Neones y Acentos */
+  --color-lime-accent: #c2f02d;
+  --color-pink-accent: #f06292;
+  --color-purple-accent: #a855f7;
+
+  /* Textos */
+  --color-muted-text: #8a8f9e;
+  --color-muted-subtle: #525866;
+}
+
+/* 2. ESTILOS BASE (Sustituto moderno de @layer base) */
+body {
+  background-color: var(--color-dark-bg);
+  color: #ffffff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+  
+  /* Bloqueo de selección ideal para UI de app nativa en Electron */
+  user-select: none;
+}
+
+/* Personalización de Scrollbars estilo Dark UI */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-dark-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-dark-border);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted-text);
+}
+
+/* 3. UTILIDADES / COMPONENTES PERSONALIZADOS (En Tailwind v4 se usa @utility) */
+
+/* Botón con el gradiente de la imagen (Lima a Rosa) */
+@utility btn-gradient-primary {
+  background-image: linear-gradient(to right, #c2f02d, #a2f02d, #f06292);
+  color: #000000;
+  font-weight: 600;
+  padding: 0.625rem 1rem;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.95;
+  }
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Tarjeta estándar del Dashboard */
+@utility dashboard-card {
+  background-color: var(--color-dark-card);
+  border: 1px solid var(--color-dark-border);
+  border-radius: 1rem;
+  padding: 1.25rem;
+}
+
+@utility navAsideBar {
+  background-color: var(--color-dark-card);
+  border-right: 1px solid var(--color-dark-border);
+  width: 250px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+/* Tarjeta activa con borde neón verde (como el dataset de la imagen) */
+@utility dashboard-card-active {
+  background-color: var(--color-dark-card);
+  border: 2px solid var(--color-lime-accent);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  box-shadow: 0 10px 25px -5px rgba(194, 240, 45, 0.1);
+}
+
+/* Inputs oscuros para el formulario */
+@utility input-dark {
+  background-color: #121318;
+  border: 1px solid var(--color-dark-border);
+  color: #ffffff;
+  font-size: 0.875rem;
+  border-radius: 0.75rem;
+  padding: 0.625rem 1rem;
+  width: 100%;
+  outline: none;
+
+  &:focus {
+    border-color: var(--color-lime-accent);
+  }
+}
+
+@utility btnAnimate{
+  @apply hover:bg-lime-accent/10;
+  @apply hover:cursor-pointer;
+  @apply hover:scale-105;
+  @apply transition-all;
+  @apply duration-300;
+}
+
+@utility btn{
+  @apply px-4 py-2;
+  @apply border;
+  @apply border-lime-accent;
+  @apply rounded-xl;
+  @apply flex;
+  @apply items-center;
+  @apply gap-2;
+  @apply bg-dark-card;
+}
+
+@utility selectCSV {
+  background: linear-gradient(180deg, var(--color-dark-card), var(--color-dark-bg));
+  border: 1px solid var(--color-dark-border);
+  border-radius: 1rem;
+  padding: 1.25rem;
+}
