@@ -11,7 +11,7 @@ export function NavAsideBar() {
     const pathname = location.pathname;
 
 	return (
-		<nav className="w-70 h-screen bg-dark-card flex flex-col gap-5">
+		<nav className="w-70 h-screen  flex flex-col gap-5">
 			<div className="mt-10 flex flex-col gap-5 h-full">
 				<div className='Title flex flex-col items-center gap-2'>
 					<img src={Logo} alt="Logo" className='h-16' />

@@ -16,15 +16,15 @@ export default function AnimatedRoutes({ location, previousPath, children }) {
     const variants = {
         enter: (dir) => ({
             y: dir === "forward" ? "-100%" : "100%",
-            opacity: 0,
+            // opacity: 0,
         }),
         center: {
             y: 0,
-            opacity: 1,
+            // opacity: 1,
         },
         exit: (dir) => ({
             y: dir === "forward" ? "100%" : "-100%",
-            opacity: 0,
+            // opacity: 0,
         }),
     };
 

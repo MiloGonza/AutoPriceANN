@@ -19,12 +19,24 @@ export async function ImportCSVs(dataset) {
 	}
 }
 
-export async function GetDatasets() {
+export async function GetDatasets(page = 1, pageSize = 10) {
 	try {
-		const response = await api.get('datasets/')
+		const response = await api.get('datasets/', {
+			params: { page, pageSize }
+		})
 		return response.data
 	} catch (error) {
 		console.error('Error fetching datasets:', error)
+		throw error
+	}
+}
+
+export async function GetRecentDatasets() {
+	try {
+		const response = await api.get('datasets/recentCSVs')
+		return response.data
+	} catch (error) {
+		console.error('Error fetching recent datasets:', error)
 		throw error
 	}
 }

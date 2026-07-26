@@ -1,6 +1,7 @@
 import os
+import math
 import pandas as pd
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import database
@@ -45,6 +46,63 @@ def healthCheck():
 # Endpoints para la gestión de Datasets (CSVs)
 # -------------------------------------------------------------
 
+REQUIRED_COLUMNS = {"Año", "Kilometraje", "Marca", "Modelo", "Ha_tenido_accidentes"}
+
+def analyze_csv(filePath: str) -> dict:
+    """Lee un CSV y extrae estadísticas para la card del front."""
+    if not os.path.exists(filePath):
+        return None
+
+    try:
+        df = pd.read_csv(filePath)
+        total = len(df)
+        columns = set(df.columns)
+        ready = REQUIRED_COLUMNS.issubset(columns)
+
+        if not ready or total == 0:
+            return {
+                "totalRecords": total,
+                "readyForTraining": False,
+                "accidentPercentage": 0.0,
+                "noAccidentPercentage": 0.0,
+                "accidentsByYear": [],
+            }
+
+        accident_count = int(df["Ha_tenido_accidentes"].sum())
+        no_accident_count = total - accident_count
+        accident_pct = round((accident_count / total) * 100, 2)
+        no_accident_pct = round((no_accident_count / total) * 100, 2)
+
+        grouped = df.groupby("Año")["Ha_tenido_accidentes"].agg(
+            accidents="sum",
+            total="count",
+        )
+        grouped["noAccidents"] = grouped["total"] - grouped["accidents"]
+        accidents_by_year = [
+            {
+                "year": int(year),
+                "accidents": int(row["accidents"]),
+                "noAccidents": int(row["noAccidents"]),
+            }
+            for year, row in grouped.iterrows()
+        ]
+
+        return {
+            "totalRecords": total,
+            "readyForTraining": True,
+            "accidentPercentage": accident_pct,
+            "noAccidentPercentage": no_accident_pct,
+            "accidentsByYear": accidents_by_year,
+        }
+    except Exception:
+        return {
+            "totalRecords": 0,
+            "readyForTraining": False,
+            "accidentPercentage": 0.0,
+            "noAccidentPercentage": 0.0,
+            "accidentsByYear": [],
+        }
+
 # Inspecciona las columnas y vista previa de un CSV
 @app.get("/datasets/inspectCSV")
 def inspectDataset(filePath: str):
@@ -72,15 +130,35 @@ def inspectDataset(filePath: str):
             detail=f"Error al leer el archivo CSV: {str(e)}"
         )
 
-# Devuelve solo los 5 CSVs más recientes
+# Devuelve solo los 5 CSVs más recientes enriquecidos
 @app.get("/datasets/recentCSVs")
 def listRecentDatasets():
-    return {"recentDatasets": database.getRecentCsvs(limit=5)}
+    recent = database.getRecentCsvs(limit=5)
+    enriched = []
+    for ds in recent:
+        analysis = analyze_csv(ds["filePath"])
+        enriched.append({**ds, "analysis": analysis})
+    return {"recentDatasets": enriched}
 
-# Devuelve todos los CSVs registrados
+# Devuelve todos los CSVs registrados con paginación y análisis
 @app.get("/datasets")
-def listAllDatasets():
-    return {"datasets": database.getAllCsvs()}
+def listAllDatasets(page: int = Query(1, ge=1), pageSize: int = Query(10, ge=1, le=100)):
+    total = database.countAllCsvs()
+    total_pages = math.ceil(total / pageSize) if total > 0 else 1
+    datasets = database.getAllCsvs(page=page, page_size=pageSize)
+
+    enriched = []
+    for ds in datasets:
+        analysis = analyze_csv(ds["filePath"])
+        enriched.append({**ds, "analysis": analysis})
+
+    return {
+        "datasets": enriched,
+        "total": total,
+        "page": page,
+        "pageSize": pageSize,
+        "totalPages": total_pages,
+    }
 
 # Registra o actualiza la fecha de uso de un CSV seleccionado
 @app.post("/datasets")

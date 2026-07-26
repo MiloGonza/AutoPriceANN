@@ -4,30 +4,31 @@ import { motion } from "motion/react";
 
 const chartColors = ["#c2f02d", "#f06292", "#a855f7", "#38bdf8", "#fb923c"];
 
-function MiniBarChart({ cars, color = "#c2f02d" }) {
-    const yearCounts = useMemo(() => {
-        const counts = {};
-        cars.forEach((c) => {
-            counts[c.year] = (counts[c.year] || 0) + 1;
-        });
-        return Object.entries(counts)
-            .sort(([a], [b]) => Number(a) - Number(b))
-            .map(([year, count]) => ({ year, count }));
-    }, [cars]);
-
-    const maxCount = Math.max(...yearCounts.map((d) => d.count));
+function MiniBarChart({ accidentsByYear = [], color = "#c2f02d" }) {
+    const maxCount = Math.max(
+        ...accidentsByYear.map((d) => d.accidents + d.noAccidents),
+        1
+    );
 
     return (
         <div className="flex items-end gap-1.5 h-full w-full px-2 pb-4">
-            {yearCounts.map((d) => (
-                <div key={d.year} className="flex flex-col items-center flex-1 h-full justify-end gap-1">
-                    <div
-                        className="w-full rounded-t"
-                        style={{ height: `${(d.count / maxCount) * 100}%`, backgroundColor: color, opacity: 0.75 }}
-                    />
-                    <span className="text-[9px] text-muted-text">{d.year}</span>
-                </div>
-            ))}
+            {accidentsByYear.map((d) => {
+                const total = d.accidents + d.noAccidents;
+                const accidentRatio = total > 0 ? d.accidents / total : 0;
+                return (
+                    <div key={d.year} className="flex flex-col items-center flex-1 h-full justify-end gap-1">
+                        <div
+                            className="w-full rounded-t"
+                            style={{
+                                height: `${(total / maxCount) * 100}%`,
+                                background: `linear-gradient(to top, #ef4444 0%, #ef4444 ${accidentRatio * 100}%, ${color} ${accidentRatio * 100}%, ${color} 100%)`,
+                                opacity: 0.85,
+                            }}
+                        />
+                        <span className="text-[9px] text-muted-text">{d.year}</span>
+                    </div>
+                );
+            })}
         </div>
     );
 }
@@ -72,10 +73,11 @@ export default function CardSlider3D({ items = [] }) {
 
                     if (isHidden) return null;
 
-                    const accidents = item.cars?.filter((c) => c.accident).length || 0;
-                    const accidentPct = item.cars?.length
-                        ? Math.round((accidents / item.cars.length) * 100)
-                        : 0;
+                    const ready = item.analysis?.readyForTraining ?? false;
+                    const records = item.analysis?.totalRecords ?? 0;
+                    const accidentPct = item.analysis?.accidentPercentage ?? 0;
+                    const noAccidentPct = item.analysis?.noAccidentPercentage ?? 0;
+                    const accidentsByYear = item.analysis?.accidentsByYear ?? [];
 
                     return (
                         <motion.div
@@ -111,22 +113,20 @@ export default function CardSlider3D({ items = [] }) {
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-full bg-lime-accent/20 flex items-center justify-center shrink-0">
                                             <span className="text-lime-accent text-lg font-bold">
-                                                {item.name?.charAt(0) || "?"}
+                                                {item.fileName?.charAt(0) || "?"}
                                             </span>
                                         </div>
                                         <div>
                                             <span className="text-white text-base font-medium block">
-                                                {item.name || `Item ${i + 1}`}
+                                                {item.fileName || `Item ${i + 1}`}
                                             </span>
-                                            {item.status && (
-                                                <span className={`text-xs ${item.status === "ready" ? "text-lime-accent" : "text-muted-text"}`}>
-                                                    {item.status === "ready" ? "Listo para entrenar" : "Pendiente"}
-                                                </span>
-                                            )}
+                                            <span className={`text-xs ${ready ? "text-lime-accent" : "text-muted-text"}`}>
+                                                {ready ? "Listo para entrenar" : "Faltan columnas"}
+                                            </span>
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <span className="text-2xl font-bold text-white block">{item.total}</span>
+                                        <span className="text-2xl font-bold text-white block">{records}</span>
                                         <span className="text-xs text-muted-text">registros</span>
                                     </div>
                                 </div>
@@ -138,12 +138,12 @@ export default function CardSlider3D({ items = [] }) {
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <div className="w-2 h-2 rounded-full bg-lime-accent" />
-                                        <span className="text-muted-text">{100 - accidentPct}% sin accidentes</span>
+                                        <span className="text-muted-text">{noAccidentPct}% sin accidentes</span>
                                     </div>
                                 </div>
 
                                 <div className="flex-1 min-h-0">
-                                    <MiniBarChart cars={item.cars || []} color={chartColors[i % chartColors.length]} />
+                                    <MiniBarChart accidentsByYear={accidentsByYear} color={chartColors[i % chartColors.length]} />
                                 </div>
                             </div>
                         </motion.div>

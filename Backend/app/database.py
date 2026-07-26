@@ -40,16 +40,26 @@ def saveCsvPath(filePath: str):
     conn.commit()
     conn.close()
 
-# Devuelve TODOS los CSVs registrados (para la pestaña de Historial Completo).
-def getAllCsvs():
-    """Devuelve TODOS los CSVs registrados (para la pestaña de Historial Completo)."""
+# Cuenta el total de CSVs registrados.
+def countAllCsvs():
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM csvDatasets")
+    total = cursor.fetchone()[0]
+    conn.close()
+    return total
+
+# Devuelve CSVs registrados con paginación.
+def getAllCsvs(page: int = 1, page_size: int = 10):
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    offset = (page - 1) * page_size
     cursor.execute("""
         SELECT id, fileName, filePath, createdAt, lastUsedAt 
         FROM csvDatasets 
         ORDER BY id DESC
-    """)
+        LIMIT ? OFFSET ?
+    """, (page_size, offset))
     rows = cursor.fetchall()
     conn.close()
     

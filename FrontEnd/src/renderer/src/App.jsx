@@ -14,7 +14,7 @@ function App() {
   }, [location.pathname]);
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-dark-card">
       <NavAsideBar />
 
       <main className="flex-1 overflow-hidden">
