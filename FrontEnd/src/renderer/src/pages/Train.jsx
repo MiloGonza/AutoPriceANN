@@ -6,7 +6,7 @@ import TrainResultsTable from '../components/TrainResultsTable'
 import TrainForm from '../components/TrainForm';
 import TrainingChart from '../components/TrainingChart';
 
-function generateMockChartData(count = 80) {
+export function generateMockChartData(count = 80) {
     const rows = []
     let trainLoss = 2.5
     let testLoss = 2.8
@@ -31,6 +31,7 @@ function generateMockChartData(count = 80) {
 function Train() {
 
     const selectedCSV = useGeneralStore((s) => s.selectedCSV)
+    const trained = useGeneralStore((s) => s.trained)
 
     const chartData = useMemo(() => generateMockChartData(80), [])
 
@@ -48,7 +49,7 @@ function Train() {
                                 layout>
                                 <div className='flex gap-2'>
                                     <div className="flex items-center gap-2 border-dark-card border-2 py-2 px-4 rounded-2xl">
-                                        <div className="rounded-full h-2 w-2 bg-red-500"></div>
+                                        <div className={`rounded-full h-2 w-2 ${selectedCSV.analysis?.readyForTraining ? 'bg-lime-accent' : 'bg-red-500'}`}></div>
                                         <span>CSV seleccionado: <b className='text-pink-accent'>{selectedCSV.fileName}</b></span>
                                     </div>
                                     <Link to={'/datasets'} className='btn btnAnimate'>
@@ -70,14 +71,29 @@ function Train() {
                 <div className='dashboard-card'>
                     <TrainForm />
                     <hr className='text-white my-4' />
-                    <div className='grid grid-cols-1 gap-6'>
-                        <div className='bg-dark-hover border-dark-border border rounded-2xl p-2 h-52'>
-                            <TrainingChart title="Perdida por Epoca" data={chartData} dataKeyTrain="trainLoss" dataKeyTest="testLoss" yLabel="Perdida" xLabel="Epoca" colorTrain="#c2f02d" colorTest="#f06292" />
-                        </div>
-                        <div className='bg-dark-hover border-dark-border border rounded-2xl p-2 h-52'>
-                            <TrainingChart title="Precision por Epoca" data={chartData} dataKeyTrain="trainAccuracy" dataKeyTest="testAccuracy" yLabel="Precision (%)" xLabel="Epoca" colorTrain="#38bdf8" colorTest="#a855f7" />
-                        </div>
-                    </div>
+                    {
+                        trained ?
+                            <motion.div 
+                            initial={{opacity:0}}
+                            animate={{opacity:1}}
+                            exit={{opacity:0}}
+                            className='grid grid-cols-1 gap-6'>
+                                <div className='bg-dark-hover border-dark-border border rounded-2xl p-2 h-52'>
+                                    <TrainingChart title="Perdida por Epoca" data={chartData} dataKeyTrain="trainLoss" dataKeyTest="testLoss" yLabel="Perdida" xLabel="Epoca" colorTrain="#c2f02d" colorTest="#f06292" />
+                                </div>
+                                <div className='bg-dark-hover border-dark-border border rounded-2xl p-2 h-52'>
+                                    <TrainingChart title="Precision por Epoca" data={chartData} dataKeyTrain="trainAccuracy" dataKeyTest="testAccuracy" yLabel="Precision (%)" xLabel="Epoca" colorTrain="#38bdf8" colorTest="#a855f7" />
+                                </div>
+                            </motion.div>
+                            :
+                            <motion.div 
+                            initial={{opacity:0}}
+                            animate={{opacity:1}}
+                            exit={{opacity:0}}
+                            className='flex bg-dark-hover rounded-2xl h-108 items-center justify-center'>
+                                <span className='text-red-500'>Aun no se ha entrenado nada</span>
+                            </motion.div>
+                    }
                 </div>
             </div>
         </div>
