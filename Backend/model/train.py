@@ -238,7 +238,7 @@ def trainModelStream(csvPath, epochs, lr, testSize, randomState):
         ssTot = numpy.sum((testReal - numpy.mean(testReal)) ** 2)
         r2 = round(float(1 - ssRes / ssTot), 4) if ssTot > 0 else 0.0
         mape = numpy.mean(numpy.abs((testReal - testPred) / numpy.where(testReal == 0, 1e-8, testReal)))
-        exactitud = round(float((1 - mape) * 100), 2)
+        mapeScore = round(float((1 - mape) * 100), 2)
 
         yield {
             "type": "epoch",
@@ -250,7 +250,7 @@ def trainModelStream(csvPath, epochs, lr, testSize, randomState):
             "trainRMSE": round(trainRMSE, 2),
             "testRMSE": round(testRMSE, 2),
             "r2": r2,
-            "exactitud": exactitud,
+            "mape": mapeScore,
         }
 
     # Guardar modelo y preprocessor para predicciones futuras

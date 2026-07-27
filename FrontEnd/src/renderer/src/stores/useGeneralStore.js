@@ -138,7 +138,7 @@ export const useGeneralStore = create((set, get) => ({
               trainRMSE: epochData.trainRMSE,
               testRMSE: epochData.testRMSE,
               r2: epochData.r2,
-              exactitud: epochData.exactitud,
+              mape: epochData.mape,
             }],
             currentEpoch: epochData.epoch,
           }))
