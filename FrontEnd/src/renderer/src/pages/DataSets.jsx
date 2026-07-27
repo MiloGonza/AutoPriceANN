@@ -28,8 +28,7 @@ function DataSets() {
 	const handleSelect = useCallback(async (dataset) => {
 		if (selectedId === dataset.id) {
 			await selectCSVFromDatasets(dataset)
-			await 
-			navigate('/')
+			navigate(-1)
 		} else {
 			setSelectedId(dataset.id)
 		}

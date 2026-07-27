@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react'
-import { useModelStore } from '../stores/useModelStore'
 import { GetColumnOptions, TakeDataSelectedCsv } from '../../../api/Api'
 import CardSlider3D from '../components/CardSlider3D'
 
@@ -14,7 +13,6 @@ import { AnimatePresence, motion } from 'motion/react'
 const ACCIDENT_OPTIONS = ["No", "Si"]
 
 export function Home() {
-	const modelStatus = useModelStore((s) => s.status)
 	const {
 		year, yearError, setYear,
 		brand, setBrand,
@@ -70,12 +68,12 @@ export function Home() {
 						</div>
 						<div>
 							<div className="flex items-center gap-2 border-dark-card border-2 py-2 px-4 rounded-2xl">
-								<div className="rounded-full h-2 w-2 bg-red-500"></div>
-								<span>Modelo {modelStatus}</span>
+								<div className={`rounded-full h-2 w-2 ${trained ? 'bg-lime-accent' : 'bg-red-500'}`}></div>
+								<span>{trained ? 'Listo para predecir' : 'Sin entrenamiento'}</span>
 							</div>
 						</div>
 					</div>
-					<HomeData />
+					<HomeData trained={trained} trainingHistory={trainingHistory} />
 					<div className='flex-1 min-h-0'>
 						<AnimatePresence>
 						{

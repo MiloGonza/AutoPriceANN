@@ -3,6 +3,7 @@ import torch.nn as nn
 from torch.utils.data import TensorDataset, DataLoader
 import pandas
 import numpy
+import math
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
@@ -192,6 +193,7 @@ def trainModelStream(csvPath, epochs, lr, testSize, randomState):
 
         trainLoss = trainLossSum / trainCount
         trainMAE = trainMAESum / trainCount
+        trainRMSE = math.sqrt(trainLoss) * targetScale
 
         # --- Evaluar con datos de prueba ---
         model.eval()
@@ -210,6 +212,7 @@ def trainModelStream(csvPath, epochs, lr, testSize, randomState):
 
         testLoss = testLossSum / testCount
         testMAE = testMAESum / testCount
+        testRMSE = math.sqrt(testLoss) * targetScale
 
         yield {
             "type": "epoch",
@@ -218,6 +221,8 @@ def trainModelStream(csvPath, epochs, lr, testSize, randomState):
             "testLoss": round(testLoss, 4),
             "trainAccuracy": round(trainMAE * targetScale, 2),
             "testAccuracy": round(testMAE * targetScale, 2),
+            "trainRMSE": round(trainRMSE, 2),
+            "testRMSE": round(testRMSE, 2),
         }
 
     # Guardar modelo y preprocessor para predicciones futuras

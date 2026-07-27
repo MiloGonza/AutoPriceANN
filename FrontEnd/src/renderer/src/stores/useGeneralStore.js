@@ -99,6 +99,8 @@ export const useGeneralStore = create((set, get) => ({
               testLoss: epochData.testLoss,
               trainAccuracy: epochData.trainAccuracy,
               testAccuracy: epochData.testAccuracy,
+              trainRMSE: epochData.trainRMSE,
+              testRMSE: epochData.testRMSE,
             }],
             currentEpoch: epochData.epoch,
           }))
