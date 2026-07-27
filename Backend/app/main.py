@@ -10,6 +10,7 @@ import database
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "model"))
 from train import loadAndPreprocess, trainModelStream
+from predict import predictPrice
 
 # Inicialización de FastAPI
 app = FastAPI(title="Servidor de Python para AutoProceANN", version="1.0")
@@ -38,6 +39,13 @@ class TrainRequest(BaseModel):
     lr: float
     testSize: float
     randomState: int
+
+class PredictRequest(BaseModel):
+    year: int
+    km: int
+    accidents: int
+    brand: str
+    modelName: str
 
 # Clase para la respuesta de verificación de salud
 class HealthCheck(BaseModel):
@@ -253,3 +261,23 @@ def trainDataset(payload: TrainRequest):
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al entrenar: {str(e)}")
+
+# Predice el precio de un carro con las características dadas
+@app.post("/predict")
+def predictCarPrice(payload: PredictRequest):
+    try:
+        result = predictPrice(
+            year=payload.year,
+            km=payload.km,
+            accidents=payload.accidents,
+            brand=payload.brand,
+            model_name=payload.modelName,
+        )
+        return {
+            "status": "success",
+            "prediction": result,
+        }
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al predecir: {str(e)}")

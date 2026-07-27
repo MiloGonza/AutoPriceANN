@@ -7,6 +7,7 @@ import { useGeneralStore } from '../stores/useGeneralStore'
 import HomeFormPredict from '../components/HomeFormPredict'
 import HomeData from '../components/HomeData'
 import TrainingChart from '../components/TrainingChart'
+import ScatterPlotChart from '../components/ScatterPlotChart'
 import { AnimatePresence, motion } from 'motion/react'
 
 
@@ -15,12 +16,16 @@ const ACCIDENT_OPTIONS = ["No", "Si"]
 export function Home() {
 	const {
 		year, yearError, setYear,
+		km, setKm,
 		brand, setBrand,
 		model, setModel,
 		accident, setAccident,
 		selectedCSV, setSelectedCSV,
 		recentCSVs, fetchRecentCSVs,
-		trained, trainingHistory
+		trained, trainingHistory,
+		scatterData,
+		csvFeatureRanges,
+		prediction, predicting, runPrediction
 	} = useGeneralStore()
 	const currentYear = new Date().getFullYear()
 	const [brands, setBrands] = useState([])
@@ -50,6 +55,12 @@ export function Home() {
 	const handleCardSelect = useCallback((item) => {
 		setSelectedCSV(item)
 		TakeDataSelectedCsv(item.filePath)
+			.then((data) => {
+				if (data?.stats?.featureRanges) {
+					useGeneralStore.setState({ csvFeatureRanges: data.stats.featureRanges })
+				}
+			})
+			.catch(() => {})
 	}, [setSelectedCSV])
 
 	const filteredModels = brand
@@ -82,8 +93,8 @@ export function Home() {
 								<div className='dashboard-card min-h-0 flex flex-col'>
 									<TrainingChart title="Perdida por Epoca" data={trainingHistory} dataKeyTrain="trainLoss" dataKeyTest="testLoss" yLabel="Perdida" xLabel="Epoca" colorTrain="#c2f02d" colorTest="#f06292" />
 								</div>
-								<div className='dashboard-card min-h-0'>
-
+								<div className='dashboard-card min-h-0 flex flex-col'>
+									<ScatterPlotChart data={scatterData} title="Predicho vs Real" />
 								</div>
 							</motion.div>
 								:
@@ -104,6 +115,8 @@ export function Home() {
 					setYear={setYear}
 					yearError={yearError}
 					currentYear={currentYear}
+					km={km}
+					setKm={setKm}
 					brand={brand}
 					setBrand={setBrand}
 					model={model}
@@ -111,8 +124,12 @@ export function Home() {
 					accident={accident}
 					setAccident={setAccident}
 					selectedCSV={selectedCSV}
+					csvFeatureRanges={csvFeatureRanges}
 					brands={brands}
 					filteredModels={filteredModels}
+					prediction={prediction}
+					predicting={predicting}
+					runPrediction={runPrediction}
 				/>
 			</div>
 			<div className='selectCSV flex flex-col flex-1 relative'>

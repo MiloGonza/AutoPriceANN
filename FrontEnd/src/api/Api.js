@@ -121,3 +121,15 @@ export async function TrainModel({ filePath, epochs, lr, testSize, randomState }
 		}
 	}
 }
+
+// --- PREDICT ---
+
+export async function PredictPrice({ year, km, accidents, brand, modelName }) {
+	try {
+		const response = await api.post('predict', { year, km, accidents, brand, modelName })
+		return response.data
+	} catch (error) {
+		console.error('Error predicting price:', error)
+		throw error
+	}
+}

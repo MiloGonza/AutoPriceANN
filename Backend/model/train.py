@@ -60,7 +60,7 @@ def loadAndPreprocess(csvPath: str, testSize: float = 0.2, randomState: int = 42
     preprocessor = ColumnTransformer(
         transformers=[
             ("num", StandardScaler(), list(range(len(NUMERIC_FEATURES)))),
-            ("cat", OneHotEncoder(handle_unknown="ignore", sparse_output=False),
+            ("cat", OneHotEncoder(handle_unknown="ignore", sparse_output=False, max_categories=20),
              list(range(len(NUMERIC_FEATURES), len(NUMERIC_FEATURES) + len(CATEGORICAL_FEATURES)))),
         ]
     )
@@ -79,9 +79,8 @@ def loadAndPreprocess(csvPath: str, testSize: float = 0.2, randomState: int = 42
     # Armar los nombres de cada columna resultante
     featureNames = NUMERIC_FEATURES.copy()
     ohe = preprocessor.named_transformers_["cat"]
-    for i, col in enumerate(CATEGORICAL_FEATURES):
-        categories = ohe.categories_[i]
-        featureNames.extend([f"{col}_{c}" for c in categories])
+    catNames = ohe.get_feature_names_out(CATEGORICAL_FEATURES)
+    featureNames.extend(catNames)
 
     # Dividir en entrenamiento y prueba
     xTrain, xTest, yTrain, yTest = train_test_split(
@@ -91,8 +90,8 @@ def loadAndPreprocess(csvPath: str, testSize: float = 0.2, randomState: int = 42
     # Convertir a tensores con PyTorch
     xTrainT = torch.tensor(xTrain, dtype=torch.float32)
     xTestT = torch.tensor(xTest, dtype=torch.float32)
-    yTrainT = torch.tensor(yTrain, dtype=torch.float32).unsqueeze(1)
-    yTestT = torch.tensor(yTest, dtype=torch.float32).unsqueeze(1)
+    yTrainT = torch.tensor(yTrain, dtype=torch.float32)
+    yTestT = torch.tensor(yTest, dtype=torch.float32)
 
     trainDataset = TensorDataset(xTrainT, yTrainT)
     testDataset = TensorDataset(xTestT, yTestT)
@@ -112,6 +111,10 @@ def loadAndPreprocess(csvPath: str, testSize: float = 0.2, randomState: int = 42
         "targetStandarDeviaton": float(numpy.std(y)),
         "targetMin": float(numpy.min(y)),
         "targetMax": float(numpy.max(y)),
+        "featureRanges": {
+            "Año": {"min": int(myCsv["Año"].min()), "max": int(myCsv["Año"].max())},
+            "Kilometraje": {"min": int(myCsv["Kilometraje"].min()), "max": int(myCsv["Kilometraje"].max())},
+        },
     }
 
     return {
@@ -137,19 +140,27 @@ def createDataLoaders(processed, batchSize: int = 32):
 class ModeloPrecio(nn.Module):
     def __init__(self, nFeatures):
         super(ModeloPrecio, self).__init__()
-        # Como puede haber x cantidad de marcas entonces no se pone un valor fijo en los features
-        self.fc1 = nn.Linear(nFeatures, 32)
-        self.fc2 = nn.Linear(32, 16)
-        self.fc3 = nn.Linear(16, 1)
-        self.relu = nn.ReLU()
+        self.net = nn.Sequential(
+            nn.Linear(nFeatures, 64),
+            nn.BatchNorm1d(64),
+            nn.LeakyReLU(0.1),
+            nn.Dropout(0.2),
+            nn.Linear(64, 32),
+            nn.BatchNorm1d(32),
+            nn.LeakyReLU(0.1),
+            nn.Dropout(0.2),
+            nn.Linear(32, 1),
+        )
+        self._initWeights()
+
+    def _initWeights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Linear):
+                nn.init.kaiming_normal_(m.weight, nonlinearity="leaky_relu", a=0.1)
+                nn.init.zeros_(m.bias)
 
     def forward(self, x):
-        x = self.fc1(x)
-        x = self.relu(x)
-        x = self.fc2(x)
-        x = self.relu(x)
-        x = self.fc3(x)
-        return x
+        return self.net(x)
 
 
 def trainModelStream(csvPath, epochs, lr, testSize, randomState):
@@ -169,7 +180,7 @@ def trainModelStream(csvPath, epochs, lr, testSize, randomState):
     targetScale = processed["targetScaler"].scale_[0]
     model = ModeloPrecio(nFeatures)
     criterion = nn.MSELoss()
-    optimizer = optim.Adam(model.parameters(), lr=lr)
+    optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=1e-4)
 
     yield {"type": "start", "totalEpochs": epochs}
 
@@ -185,6 +196,7 @@ def trainModelStream(csvPath, epochs, lr, testSize, randomState):
             predictions = model(batchX)
             loss = criterion(predictions, batchY)
             loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
             optimizer.step()
 
             trainLossSum += loss.item() * batchX.size(0)
@@ -214,6 +226,20 @@ def trainModelStream(csvPath, epochs, lr, testSize, randomState):
         testMAE = testMAESum / testCount
         testRMSE = math.sqrt(testLoss) * targetScale
 
+        # --- R² y Exactitud en test set ---
+        model.eval()
+        allTestX = processed["testDataset"].tensors[0]
+        allTestY = processed["testDataset"].tensors[1]
+        with torch.no_grad():
+            allPreds = model(allTestX)
+        testReal = allTestY.numpy().flatten()
+        testPred = allPreds.numpy().flatten()
+        ssRes = numpy.sum((testReal - testPred) ** 2)
+        ssTot = numpy.sum((testReal - numpy.mean(testReal)) ** 2)
+        r2 = round(float(1 - ssRes / ssTot), 4) if ssTot > 0 else 0.0
+        mape = numpy.mean(numpy.abs((testReal - testPred) / numpy.where(testReal == 0, 1e-8, testReal)))
+        exactitud = round(float((1 - mape) * 100), 2)
+
         yield {
             "type": "epoch",
             "epoch": epoch,
@@ -223,6 +249,8 @@ def trainModelStream(csvPath, epochs, lr, testSize, randomState):
             "testAccuracy": round(testMAE * targetScale, 2),
             "trainRMSE": round(trainRMSE, 2),
             "testRMSE": round(testRMSE, 2),
+            "r2": r2,
+            "exactitud": exactitud,
         }
 
     # Guardar modelo y preprocessor para predicciones futuras
@@ -232,11 +260,25 @@ def trainModelStream(csvPath, epochs, lr, testSize, randomState):
         "modelStateDict": model.state_dict(),
         "nFeatures": nFeatures,
         "preprocessor": processed["preprocessor"],
+        "targetScaler": processed["targetScaler"],
         "featureNames": processed["featureNames"],
     }, modelPath)
+
+    # Calcular scatter data (predicciones vs reales en test set)
+    model.eval()
+    scatterData = []
+    allTestX = processed["testDataset"].tensors[0]
+    allTestY = processed["testDataset"].tensors[1]
+    with torch.no_grad():
+        allPreds = model(allTestX)
+    realVals = processed["targetScaler"].inverse_transform(allTestY.numpy()).flatten()
+    predVals = processed["targetScaler"].inverse_transform(allPreds.numpy()).flatten()
+    for real, pred in zip(realVals, predVals):
+        scatterData.append({"real": round(float(real), 2), "predicted": round(float(pred), 2)})
 
     yield {
         "type": "done",
         "stats": processed["stats"],
         "modelPath": modelPath,
+        "scatterData": scatterData,
     }

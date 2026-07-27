@@ -16,6 +16,8 @@ function HomeData({ trained, trainingHistory }) {
 
 	const mae = last ? formatValue(last.testAccuracy) : '$0'
 	const rmse = last ? formatValue(last.testRMSE) : '$0'
+	const r2 = last && last.r2 != null ? last.r2.toFixed(4) : '-'
+	const exactitud = last && last.exactitud != null ? `${last.exactitud.toFixed(1)}%` : '-'
 
 	return (
 		<div className='gap-4 grid-cols-4 grid'>
@@ -43,7 +45,7 @@ function HomeData({ trained, trainingHistory }) {
 				</div>
 				<div className='flex flex-col gap2'>
 					<span className='text-muted-text'>R² Score</span>
-					<span className='text-2xl'>-</span>
+					<span className='text-2xl'>{r2}</span>
 				</div>
 			</div>
 			<div className='flex gap-4 dashboard-card items-center'>
@@ -52,7 +54,7 @@ function HomeData({ trained, trainingHistory }) {
 				</div>
 				<div className='flex flex-col gap2'>
 					<span className='text-muted-text'>Exactitud</span>
-					<span className='text-2xl'>-</span>
+					<span className='text-2xl'>{exactitud}</span>
 				</div>
 			</div>
 		</div>
