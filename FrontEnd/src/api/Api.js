@@ -85,3 +85,39 @@ export async function TakeDataSelectedCsv(filePath) {
 }
 
 // --- TRAIN ---
+
+export async function TrainModel({ filePath, epochs, lr, testSize, randomState }, onEpoch, onDone) {
+	const response = await fetch('http://localhost:8000/datasets/train', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ filePath, epochs, lr, testSize, randomState }),
+	})
+
+	if (!response.ok) {
+		const err = await response.json().catch(() => ({ detail: 'Error desconocido' }))
+		throw new Error(err.detail || 'Error al entrenar')
+	}
+
+	const reader = response.body.getReader()
+	const decoder = new TextDecoder()
+	let buffer = ''
+
+	while (true) {
+		const { done, value } = await reader.read()
+		if (done) break
+
+		buffer += decoder.decode(value, { stream: true })
+		const lines = buffer.split('\n')
+		buffer = lines.pop()
+
+		for (const line of lines) {
+			if (!line.trim()) continue
+			const chunk = JSON.parse(line)
+			if (chunk.type === 'epoch') {
+				onEpoch(chunk)
+			} else if (chunk.type === 'done') {
+				onDone(chunk)
+			}
+		}
+	}
+}

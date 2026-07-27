@@ -16,11 +16,17 @@ const CustomTooltip = ({ active, payload, label }) => {
 			<p className="text-muted-text text-xs mb-2">Época {label}</p>
 			{payload.map((entry) => (
 				<p key={entry.name} className="text-sm" style={{ color: entry.color }}>
-					{entry.name === "train" ? "Entrenamiento" : "Prueba"}: {entry.value}
+					{entry.name === "train" ? "Entrenamiento" : "Prueba"}: ${formatValue(entry.value)}
 				</p>
 			))}
 		</div>
 	)
+}
+
+function formatValue(v) {
+	if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`
+	if (v >= 1_000) return `${(v / 1_000).toFixed(1)}k`
+	return v.toFixed(2)
 }
 
 export default function TrainingChart({
@@ -50,7 +56,7 @@ export default function TrainingChart({
 			</div>
 			<div className="flex-1 min-h-0">
 				<ResponsiveContainer width="100%" height="100%">
-					<LineChart data={data} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+					<LineChart data={data} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
 						<CartesianGrid strokeDasharray="3 3" stroke="#2a2d36" vertical={false} />
 						<XAxis
 							dataKey="epoch"
@@ -58,14 +64,16 @@ export default function TrainingChart({
 							tick={{ fill: "#525866", fontSize: 11 }}
 							axisLine={{ stroke: "#2a2d36" }}
 							tickLine={false}
+							interval={Math.max(0, Math.floor(data.length / 8) - 1)}
 							label={xLabel ? { value: xLabel, position: "insideBottom", offset: -2, fill: "#525866", fontSize: 11 } : undefined}
 						/>
 						<YAxis
+							width={40}
 							stroke="#525866"
 							tick={{ fill: "#525866", fontSize: 11 }}
 							axisLine={false}
 							tickLine={false}
-							label={yLabel ? { value: yLabel, angle: -90, position: "insideCenter", offset: -5, fill: "#525866", fontSize: 11 } : undefined}
+							tickFormatter={formatValue}
 						/>
 						<Tooltip content={<CustomTooltip />} />
 						<Line

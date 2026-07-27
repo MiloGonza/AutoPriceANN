@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useModelStore } from '../stores/useModelStore'
 import { GetColumnOptions, TakeDataSelectedCsv } from '../../../api/Api'
 import CardSlider3D from '../components/CardSlider3D'
@@ -8,7 +8,6 @@ import { useGeneralStore } from '../stores/useGeneralStore'
 import HomeFormPredict from '../components/HomeFormPredict'
 import HomeData from '../components/HomeData'
 import TrainingChart from '../components/TrainingChart'
-import { generateMockChartData } from './Train'
 import { AnimatePresence, motion } from 'motion/react'
 
 
@@ -23,7 +22,7 @@ export function Home() {
 		accident, setAccident,
 		selectedCSV, setSelectedCSV,
 		recentCSVs, fetchRecentCSVs,
-		trained
+		trained, trainingHistory
 	} = useGeneralStore()
 	const currentYear = new Date().getFullYear()
 	const [brands, setBrands] = useState([])
@@ -59,8 +58,6 @@ export function Home() {
 		? models.filter(() => true)
 		: models
 
-	const chartData = useMemo(() => generateMockChartData(80), [])
-
 
 	return (
 		<div className="flex flex-col h-[calc(100vh-2rem)] p-10 gap-4 bg-dark-bg rounded-2xl m-4">
@@ -79,24 +76,24 @@ export function Home() {
 						</div>
 					</div>
 					<HomeData />
-					<div>
+					<div className='flex-1 min-h-0'>
 						<AnimatePresence>
 						{
 							trained ?
-								<motion.div className='grid grid-cols-2 gap-4 h-full'>
-									<div className='dashboard-card'>
-										<TrainingChart title="Perdida por Epoca" data={chartData} dataKeyTrain="trainLoss" dataKeyTest="testLoss" yLabel="Perdida" xLabel="Epoca" colorTrain="#c2f02d" colorTest="#f06292" />
-									</div>
-									<div className='dashboard-card'>
+							<motion.div className='grid grid-cols-2 gap-4 h-full'>
+								<div className='dashboard-card min-h-0 flex flex-col'>
+									<TrainingChart title="Perdida por Epoca" data={trainingHistory} dataKeyTrain="trainLoss" dataKeyTest="testLoss" yLabel="Perdida" xLabel="Epoca" colorTrain="#c2f02d" colorTest="#f06292" />
+								</div>
+								<div className='dashboard-card min-h-0'>
 
-									</div>
-								</motion.div>
+								</div>
+							</motion.div>
 								:
 								<motion.div
 									initial={{ opacity: 0 }}
 									animate={{ opacity: 1 }}
 									exit={{ opacity: 0 }}
-									className='flex bg-dark-card rounded-2xl h-102 items-center justify-center'>
+									className='flex dashboard-card h-full items-center justify-center'>
 									<span className='text-red-500'>Aun no se ha entrenado nada</span>
 								</motion.div>
 						}

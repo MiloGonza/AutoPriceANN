@@ -1,39 +1,23 @@
 import { Link } from 'react-router-dom';
-import { useMemo } from 'react';
 import { useGeneralStore } from '../stores/useGeneralStore'
 import { AnimatePresence, motion } from 'motion/react';
 import TrainResultsTable from '../components/TrainResultsTable'
 import TrainForm from '../components/TrainForm';
 import TrainingChart from '../components/TrainingChart';
 
-export function generateMockChartData(count = 80) {
-    const rows = []
-    let trainLoss = 2.5
-    let testLoss = 2.8
-    let trainAcc = 10
-    let testAcc = 8
-    for (let i = 1; i <= count; i++) {
-        trainLoss = Math.max(0.01, trainLoss - (Math.random() * 0.08 + 0.01))
-        testLoss = Math.max(0.02, testLoss - (Math.random() * 0.07 + 0.01))
-        trainAcc = Math.min(99.5, trainAcc + (Math.random() * 3 + 0.5))
-        testAcc = Math.min(98.5, testAcc + (Math.random() * 2.8 + 0.4))
-        rows.push({
-            epoch: i,
-            trainLoss: Number(trainLoss.toFixed(4)),
-            testLoss: Number(testLoss.toFixed(4)),
-            trainAccuracy: Number(trainAcc.toFixed(2)),
-            testAccuracy: Number(testAcc.toFixed(2)),
-        })
-    }
-    return rows
-}
-
 function Train() {
 
     const selectedCSV = useGeneralStore((s) => s.selectedCSV)
     const trained = useGeneralStore((s) => s.trained)
+    const training = useGeneralStore((s) => s.training)
+    const trainingHistory = useGeneralStore((s) => s.trainingHistory)
+    const totalEpochs = useGeneralStore((s) => s.totalEpochs)
+    const currentEpoch = useGeneralStore((s) => s.currentEpoch)
+    const trainingSession = useGeneralStore((s) => s.trainingSession)
 
-    const chartData = useMemo(() => generateMockChartData(80), [])
+    const progress = training && totalEpochs > 0
+        ? (currentEpoch / totalEpochs) * 100
+        : trained ? 100 : 0
 
     return (
         <div className="flex relative flex-col h-[calc(100vh-2rem)] p-10 gap-4 bg-dark-bg rounded-2xl m-4">
@@ -67,26 +51,26 @@ function Train() {
                 </AnimatePresence>
             </div>
             <div className='flex max-h-full h-full overflow-hidden gap-4'>
-                <TrainResultsTable progress={100} />
+                <TrainResultsTable progress={progress} data={trainingHistory} progressKey={trainingSession} />
                 <div className='dashboard-card'>
                     <TrainForm />
                     <hr className='text-white my-4' />
                     {
                         trained ?
-                            <motion.div 
+                            <motion.div
                             initial={{opacity:0}}
                             animate={{opacity:1}}
                             exit={{opacity:0}}
                             className='grid grid-cols-1 gap-6'>
                                 <div className='bg-dark-hover border-dark-border border rounded-2xl p-2 h-52'>
-                                    <TrainingChart title="Perdida por Epoca" data={chartData} dataKeyTrain="trainLoss" dataKeyTest="testLoss" yLabel="Perdida" xLabel="Epoca" colorTrain="#c2f02d" colorTest="#f06292" />
+                                    <TrainingChart title="Perdida por Epoca" data={trainingHistory} dataKeyTrain="trainLoss" dataKeyTest="testLoss" yLabel="Perdida" xLabel="Epoca" colorTrain="#c2f02d" colorTest="#f06292" />
                                 </div>
                                 <div className='bg-dark-hover border-dark-border border rounded-2xl p-2 h-52'>
-                                    <TrainingChart title="Precision por Epoca" data={chartData} dataKeyTrain="trainAccuracy" dataKeyTest="testAccuracy" yLabel="Precision (%)" xLabel="Epoca" colorTrain="#38bdf8" colorTest="#a855f7" />
+                                    <TrainingChart title="MAE por Epoca" data={trainingHistory} dataKeyTrain="trainAccuracy" dataKeyTest="testAccuracy" yLabel="MAE (pesos)" xLabel="Epoca" colorTrain="#38bdf8" colorTest="#a855f7" />
                                 </div>
                             </motion.div>
                             :
-                            <motion.div 
+                            <motion.div
                             initial={{opacity:0}}
                             animate={{opacity:1}}
                             exit={{opacity:0}}

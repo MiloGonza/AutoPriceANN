@@ -4,11 +4,12 @@ import math
 import pandas as pd
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 import database
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "model"))
-from train import loadAndPreprocess
+from train import loadAndPreprocess, trainModelStream
 
 # Inicialización de FastAPI
 app = FastAPI(title="Servidor de Python para AutoProceANN", version="1.0")
@@ -30,6 +31,13 @@ database.initDb()
 # Esquema para recibir datos desde React
 class CSVPathRequest(BaseModel):
     filePath: str
+
+class TrainRequest(BaseModel):
+    filePath: str
+    epochs: int
+    lr: float
+    testSize: float
+    randomState: int
 
 # Clase para la respuesta de verificación de salud
 class HealthCheck(BaseModel):
@@ -218,3 +226,30 @@ def processDataset(payload: CSVPathRequest):
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al procesar: {str(e)}")
+
+import json
+
+# Entrena el modelo con los datos del CSV y la configuración del usuario (streaming)
+@app.post("/datasets/train")
+def trainDataset(payload: TrainRequest):
+    try:
+        lrDecimal = payload.lr / 100.0
+        testSizeDecimal = payload.testSize / 100.0
+
+        def generate():
+            for chunk in trainModelStream(
+                csvPath=payload.filePath,
+                epochs=payload.epochs,
+                lr=lrDecimal,
+                testSize=testSizeDecimal,
+                randomState=payload.randomState,
+            ):
+                yield json.dumps(chunk) + "\n"
+
+        return StreamingResponse(generate(), media_type="application/x-ndjson")
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al entrenar: {str(e)}")

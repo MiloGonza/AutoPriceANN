@@ -4,32 +4,15 @@ import { useState, useRef, useCallback, useMemo, useEffect } from "react"
 const ROW_HEIGHT = 36
 const BUFFER = 8
 
-function generateMockData(count = 80) {
-	const rows = []
-	let trainLoss = 2.5
-	let testLoss = 2.8
-	let trainAcc = 10
-	let testAcc = 8
-	for (let i = 1; i <= count; i++) {
-		trainLoss = Math.max(0.01, trainLoss - (Math.random() * 0.08 + 0.01))
-		testLoss = Math.max(0.02, testLoss - (Math.random() * 0.07 + 0.01))
-		trainAcc = Math.min(99.5, trainAcc + (Math.random() * 3 + 0.5))
-		testAcc = Math.min(98.5, testAcc + (Math.random() * 2.8 + 0.4))
-		rows.push({
-			epoch: i,
-			trainLoss: Number(trainLoss.toFixed(4)),
-			testLoss: Number(testLoss.toFixed(4)),
-			trainAccuracy: Number(trainAcc.toFixed(2)),
-			testAccuracy: Number(testAcc.toFixed(2)),
-		})
-	}
-	return rows
+function formatValue(v) {
+	if (v >= 1_000_000) return `$${(v / 1_000_000).toFixed(1)}M`
+	if (v >= 1_000) return `$${(v / 1_000).toFixed(1)}k`
+	return `$${v.toFixed(2)}`
 }
 
-export default function TrainResultsTable({ progress = 0 }) {
+export default function TrainResultsTable({ progress = 0, data = [], progressKey = 0 }) {
 	const [scrollY, setScrollY] = useState(0)
 	const containerRef = useRef(null)
-	const data = useMemo(() => generateMockData(80), [])
 	const totalRows = data.length
 	const totalHeight = totalRows * ROW_HEIGHT
 
@@ -66,9 +49,11 @@ export default function TrainResultsTable({ progress = 0 }) {
 				<span className="text-sm text-muted-text whitespace-nowrap">Progreso</span>
 				<div className="flex-1 h-3 rounded-full bg-dark-border overflow-hidden">
 					<div
-						className="h-full rounded-full transition-all duration-500"
+						key={progressKey}
+						className="h-full rounded-full"
 						style={{
 							width: `${progress}%`,
+							transition: 'width 0.15s ease-out',
 							background: "linear-gradient(to right, var(--color-lime-accent), var(--color-pink-accent), var(--color-purple-accent))",
 						}}
 					/>
@@ -104,8 +89,8 @@ export default function TrainResultsTable({ progress = 0 }) {
 									<span className="text-center text-lime-accent font-medium">{row.epoch}</span>
 									<span className="text-right text-pink-accent">{row.trainLoss}</span>
 									<span className="text-right text-pink-accent/70">{row.testLoss}</span>
-									<span className="text-right text-lime-accent">{row.trainAccuracy}</span>
-									<span className="text-right text-lime-accent/70">{row.testAccuracy}</span>
+									<span className="text-right text-lime-accent">{formatValue(row.trainAccuracy)}</span>
+									<span className="text-right text-lime-accent/70">{formatValue(row.testAccuracy)}</span>
 								</div>
 							)
 						})}

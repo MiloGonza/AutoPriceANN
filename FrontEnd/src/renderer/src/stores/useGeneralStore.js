@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { GetRecentDatasets, AddRecentSelection, TakeDataSelectedCsv } from '../../../api/Api'
+import { GetRecentDatasets, AddRecentSelection, TakeDataSelectedCsv, TrainModel } from '../../../api/Api'
 
 const currentYear = new Date().getFullYear();
 const FIRST_CAR_YEAR = 1886;
@@ -63,8 +63,59 @@ export const useGeneralStore = create((set, get) => ({
   // Train *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
   trained: false,
+  training: false,
+  trainingHistory: [],
+  trainingStats: null,
+  trainingError: null,
+  totalEpochs: 0,
+  currentEpoch: 0,
+  trainingSession: 0,
 
-  setTrained: (trained) => set({trained})
+  setTrained: (trained) => set({ trained }),
+
+  runTraining: async ({ epochs, lr, testSize, randomState }) => {
+    const { selectedCSV } = get()
+    if (!selectedCSV) return
+
+    set({
+      training: true,
+      trainingError: null,
+      trainingHistory: [],
+      trainingStats: null,
+      trained: false,
+      totalEpochs: epochs,
+      currentEpoch: 0,
+      trainingSession: get().trainingSession + 1,
+    })
+
+    try {
+      await TrainModel(
+        { filePath: selectedCSV.filePath, epochs, lr, testSize, randomState },
+        (epochData) => {
+          set((state) => ({
+            trainingHistory: [...state.trainingHistory, {
+              epoch: epochData.epoch,
+              trainLoss: epochData.trainLoss,
+              testLoss: epochData.testLoss,
+              trainAccuracy: epochData.trainAccuracy,
+              testAccuracy: epochData.testAccuracy,
+            }],
+            currentEpoch: epochData.epoch,
+          }))
+        },
+        (doneData) => {
+          set({
+            trained: true,
+            training: false,
+            trainingStats: doneData.stats,
+          })
+        }
+      )
+    } catch (error) {
+      set({ training: false, trainingError: error.message })
+      throw error
+    }
+  }
 
   // Train *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 }))

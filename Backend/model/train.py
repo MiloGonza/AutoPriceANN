@@ -118,6 +118,7 @@ def loadAndPreprocess(csvPath: str, testSize: float = 0.2, randomState: int = 42
         "testDataset": testDataset,
         "featureNames": featureNames,
         "preprocessor": preprocessor,
+        "targetScaler": targetScaler,
         "nFeatures": nFeatures,
         "stats": stats,
     }
@@ -148,3 +149,89 @@ class ModeloPrecio(nn.Module):
         x = self.relu(x)
         x = self.fc3(x)
         return x
+
+
+def trainModelStream(csvPath, epochs, lr, testSize, randomState):
+    """
+    Generador que entrena el modelo y yields cada época como dict JSON-compatible.
+    Protocolo:
+      1. {"type": "start", "totalEpochs": N}
+      2. {"type": "epoch", "epoch": N, "trainLoss": X, "testLoss": X, "trainAccuracy": X, "testAccuracy": X}
+      3. {"type": "done", "stats": {...}, "modelPath": "..."}
+    """
+    import torch.optim as optim
+
+    processed = loadAndPreprocess(csvPath, testSize=testSize, randomState=randomState)
+    trainLoader, testLoader = createDataLoaders(processed, batchSize=32)
+
+    nFeatures = processed["nFeatures"]
+    targetScale = processed["targetScaler"].scale_[0]
+    model = ModeloPrecio(nFeatures)
+    criterion = nn.MSELoss()
+    optimizer = optim.Adam(model.parameters(), lr=lr)
+
+    yield {"type": "start", "totalEpochs": epochs}
+
+    for epoch in range(1, epochs + 1):
+        # --- Entrenar ---
+        model.train()
+        trainLossSum = 0.0
+        trainMAESum = 0.0
+        trainCount = 0
+
+        for batchX, batchY in trainLoader:
+            optimizer.zero_grad()
+            predictions = model(batchX)
+            loss = criterion(predictions, batchY)
+            loss.backward()
+            optimizer.step()
+
+            trainLossSum += loss.item() * batchX.size(0)
+            trainMAESum += nn.functional.l1_loss(predictions, batchY, reduction="sum").item()
+            trainCount += batchX.size(0)
+
+        trainLoss = trainLossSum / trainCount
+        trainMAE = trainMAESum / trainCount
+
+        # --- Evaluar con datos de prueba ---
+        model.eval()
+        testLossSum = 0.0
+        testMAESum = 0.0
+        testCount = 0
+
+        with torch.no_grad():
+            for batchX, batchY in testLoader:
+                predictions = model(batchX)
+                loss = criterion(predictions, batchY)
+
+                testLossSum += loss.item() * batchX.size(0)
+                testMAESum += nn.functional.l1_loss(predictions, batchY, reduction="sum").item()
+                testCount += batchX.size(0)
+
+        testLoss = testLossSum / testCount
+        testMAE = testMAESum / testCount
+
+        yield {
+            "type": "epoch",
+            "epoch": epoch,
+            "trainLoss": round(trainLoss, 4),
+            "testLoss": round(testLoss, 4),
+            "trainAccuracy": round(trainMAE * targetScale, 2),
+            "testAccuracy": round(testMAE * targetScale, 2),
+        }
+
+    # Guardar modelo y preprocessor para predicciones futuras
+    modelDir = os.path.dirname(os.path.abspath(__file__))
+    modelPath = os.path.join(modelDir, "autoPriceAnnModel.pth")
+    torch.save({
+        "modelStateDict": model.state_dict(),
+        "nFeatures": nFeatures,
+        "preprocessor": processed["preprocessor"],
+        "featureNames": processed["featureNames"],
+    }, modelPath)
+
+    yield {
+        "type": "done",
+        "stats": processed["stats"],
+        "modelPath": modelPath,
+    }
