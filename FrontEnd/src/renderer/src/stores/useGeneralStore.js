@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { GetRecentDatasets, AddRecentSelection } from '../../../api/Api'
+import { GetRecentDatasets, AddRecentSelection, TakeDataSelectedCsv } from '../../../api/Api'
 
 const currentYear = new Date().getFullYear();
 const FIRST_CAR_YEAR = 1886;
@@ -55,6 +55,7 @@ export const useGeneralStore = create((set, get) => ({
     addRecentCSV(csv)
     try {
       await AddRecentSelection(csv.filePath)
+      await TakeDataSelectedCsv(csv.filePath)
     } catch { }
   },
   // Home *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useModelStore } from '../stores/useModelStore'
-import { GetColumnOptions } from '../../../api/Api'
+import { GetColumnOptions, TakeDataSelectedCsv } from '../../../api/Api'
 import CardSlider3D from '../components/CardSlider3D'
 
 import { Link } from 'react-router-dom'
@@ -48,6 +48,7 @@ export function Home() {
 
 	const handleCardSelect = useCallback((item) => {
 		setSelectedCSV(item)
+		TakeDataSelectedCsv(item.filePath)
 	}, [setSelectedCSV])
 
 	const filteredModels = brand

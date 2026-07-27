@@ -72,3 +72,16 @@ export async function AddRecentSelection(filePath) {
 		throw error
 	}
 }
+
+export async function TakeDataSelectedCsv(filePath) {
+	try {
+		const response = await api.post('datasets/process', { filePath })
+		console.log(response)
+		return response.data
+	} catch (error) {
+		console.error('Error error procesing the csv:', error)
+		throw error
+	}
+}
+
+// --- TRAIN ---
