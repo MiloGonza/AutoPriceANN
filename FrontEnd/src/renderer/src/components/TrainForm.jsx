@@ -12,7 +12,7 @@ function TrainForm(params) {
                     type="number"
                     value={''}
                     placeholder="Ej. 398"
-                    min={1886}
+                    min={1}
                     className="border rounded-xl flex-1 border-dark-border focus:border-lime-accent outline-none focus:outline-none bg-transparent px-3 py-2 text-white placeholder-gray-500 no-spin disabled:opacity-40"
                 />
             </div>
@@ -24,7 +24,7 @@ function TrainForm(params) {
                         type="number"
                         value={''}
                         placeholder="Ej. 5"
-                        min={1886}
+                        min={0}
                         className="border rounded-xl flex-1 border-dark-border focus:border-lime-accent outline-none focus:outline-none bg-transparent px-3 py-2 text-white placeholder-gray-500 no-spin disabled:opacity-40"
                     />
                     %
@@ -38,7 +38,7 @@ function TrainForm(params) {
                         type="number"
                         value={''}
                         placeholder="Ej. 20"
-                        min={1886}
+                        min={0}
                         className="border rounded-xl flex-1 border-dark-border focus:border-lime-accent outline-none focus:outline-none bg-transparent px-3 py-2 text-white placeholder-gray-500 no-spin disabled:opacity-40"
                     />
                     %
@@ -51,7 +51,7 @@ function TrainForm(params) {
                     type="number"
                     value={''}
                     placeholder="Ej. 398"
-                    min={1886}
+                    min={0}
                     className="border rounded-xl flex-1 border-dark-border focus:border-lime-accent outline-none focus:outline-none bg-transparent px-3 py-2 text-white placeholder-gray-500 no-spin disabled:opacity-40"
                 />
             </div>

@@ -1,4 +1,5 @@
 import torch
+import torch.nn as nn
 from torch.utils.data import TensorDataset, DataLoader
 import pandas
 import numpy
@@ -6,6 +7,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 import os
+import json
+import time
 
 
 # Columnas que debe tener el CSV para poder entrenar de lo contrario error
@@ -95,8 +98,8 @@ def loadAndPreprocess(csvPath: str, testSize: float = 0.2, randomState: int = 42
 
     nFeatures = xProcessed.shape[1]
 
-    # Una mousi-herramienta que ayudara mas tarde
-    # prediccionReal = targetScaler.inverse_transform(y)
+    #Una mousi-herramienta que ayudara mas tarde
+    prediccionReal = targetScaler.inverse_transform(y)
 
     stats = {
         "totalRecords": len(myCsv),
@@ -127,3 +130,21 @@ def createDataLoaders(processed, batchSize: int = 32):
     testLoader = DataLoader(
         processed["testDataset"], batch_size=batchSize, shuffle=False)
     return trainLoader, testLoader
+
+
+class ModeloPrecio(nn.Module):
+    def __init__(self, nFeatures):
+        super(ModeloPrecio, self).__init__()
+        # Como puede haber x cantidad de marcas entonces no se pone un valor fijo en los features
+        self.fc1 = nn.Linear(nFeatures, 32)
+        self.fc2 = nn.Linear(32, 16)
+        self.fc3 = nn.Linear(16, 1)
+        self.relu = nn.ReLU()
+
+    def forward(self, x):
+        x = self.fc1(x)
+        x = self.relu(x)
+        x = self.fc2(x)
+        x = self.relu(x)
+        x = self.fc3(x)
+        return x
